@@ -1,0 +1,62 @@
+/* halaman1.css - styles to match gambar1.jpeg */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+
+:root{
+	--accent:#b71c1c; /* deep red */
+	--accent-soft:rgba(183,28,28,0.12);
+}
+*{box-sizing:border-box}
+body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:0; background:#fff}
+.container{max-width:1200px;margin:18px auto;padding:12px}
+.header{padding:12px 4px 28px;position:relative;z-index:10}
+.header-inner{display:flex;align-items:center;gap:18px;flex-wrap:nowrap}
+.logo{
+	/* Preserve full logo without cropping */
+	width: auto;            /* allow natural width */
+	height: 64px;          /* fix height so header stays consistent */
+	max-width: 140px;      /* avoid overly wide logo */
+	object-fit: contain;   /* don't crop, scale to fit */
+	background: transparent;
+	padding: 2px;          /* small breathing room */
+	border-radius: 4px;    /* optional gentle rounding */
+	display: block;
+}
+.title{color:var(--accent);font-weight:700;font-size:28px;white-space:nowrap}
+
+/* Keep header visually separated from the cards to avoid clipping */
+.cards-area{margin-top:6px}
+
+@media(min-width:1200px){
+	.container{padding-left:24px;padding-right:24px}
+	.logo{width:72px;height:72px}
+	.title{font-size:32px}
+	.header{padding-bottom:34px}
+}
+
+.cards-area{position:relative}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:220px 220px;gap:28px}
+.card{background-image:url('/gambar/logo.png');background-size:cover;background-position:center;border-radius:18px;box-shadow:0 12px 24px rgba(0,0,0,0.06);min-height:220px}
+.card.card-tl { background-image: url('/gambar/bg1.jpg'); }
+.card.card-tr { background-image: url('/gambar/bg2.jpg'); }
+.card.card-bl { background-image: url('/gambar/bg3.jpg'); }
+.card.card-br { background-image: url('/gambar/bg3.jpg'); }
+
+.overlay-form{position:absolute;left:50%;top:12%;transform:translateX(-50%);width:70%;max-width:820px}
+.overlay-inner{background:rgba(255,255,255,0.70);backdrop-filter:blur(2px);border-radius:18px;padding:34px 40px;box-shadow:0 18px 44px rgba(0,0,0,0.09);text-align:center}
+.overlay-inner h1{color:var(--accent);font-size:36px;margin:0 0 6px;font-weight:800}
+.overlay-inner .lead{color:rgba(0,0,0,0.45);margin:0 0 20px}
+
+.visit-form{display:flex;flex-direction:column;align-items:center;gap:14px}
+.visit-form input[type=text]{width:82%;padding:14px 18px;border-radius:28px;border:2px solid rgba(183,28,28,0.25);font-size:16px;outline:none;background:transparent}
+.visit-form input[type=text]::placeholder{color:rgba(183,28,28,0.6)}
+.visit-form input[type=text]:focus{border-color:var(--accent);box-shadow:0 6px 18px rgba(183,28,28,0.06)}
+
+.btn-wrap{margin-top:8px}
+.visit-form button{background:var(--accent);color:#fff;border:none;padding:12px 24px;border-radius:6px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(183,28,28,0.18)}
+.visit-form button:hover{background:#9f1717}
+
+@media(max-width:900px){
+	.cards-grid{grid-template-columns:1fr;grid-template-rows:180px 180px 180px 180px}
+	.overlay-form{top:18%;width:92%}
+	.visit-form input[type=text]{width:92%}
+}

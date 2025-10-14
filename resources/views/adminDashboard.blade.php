@@ -29,6 +29,7 @@
       </aside>
 
       <main class="main">
+        <div class="main-inner">
         <header class="topbar">
           <div class="brand-header">
             <img src="/gambar/brin-logo.png" alt="BRIN" onerror="this.style.display='none'">
@@ -60,29 +61,48 @@
                 <th>Instansi</th>
                 <th>Tujuan</th>
                 <th>Hari</th>
-                <th>tggl/bln/thun</th>
-                <th>Time</th>
+                <th>tgl/bln/thun</th>
+                <th>Masuk</th>
+                <th>Keluar</th>
+                <th>Status</th>
+                <th>P. Jawab</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Fauzan</td>
-                <td>ITH Parepare</td>
-                <td>BRIN</td>
-                <td>Senin</td>
-                <td>20/10/2025</td>
-                <td>07:30 WITA</td>
-                <td class="actions"><button class="btn-delete"><img src="/gambar/trash.png" alt="Hapus" class="trash-icon"></button></td>
-              </tr>
-              <!-- blank rows to create lines like in design -->
-              <tr class="empty-row"><td colspan="7"></td></tr>
-              <tr class="empty-row"><td colspan="7"></td></tr>
-              <tr class="empty-row"><td colspan="7"></td></tr>
+              <!-- Each row is a single rounded card spanning all columns -->
+              <!-- <tr>
+                <td colspan="11">
+                  <div class="row-card">
+                    <div class="col no">1</div>
+                    <div class="col nama">Bayu</div>
+                    <div class="col instansi">ITH</div>
+                    <div class="col tujuan">BRIN</div>
+                    <div class="col hari">SENIN</div>
+                    <div class="col tgl">12/01/025</div>
+                    <div class="col masuk">07:30</div>
+                    <div class="col keluar">-</div>
+                    <div class="col status">-</div>
+                    <div class="col pj">Kawasan</div>
+                  </div>
+                </td>
+              </tr> -->
             </tbody>
           </table>
+          <!-- pagination and actions -->
+          <div class="table-controls">
+            <div class="pagination">
+              <button class="page-btn prev">← Prev</button>
+              <div class="pages"><button class="page active">1</button><button class="page">2</button><button class="page">3</button><button class="page">4</button><button class="page">5</button></div>
+              <button class="page-btn next">Next →</button>
+            </div>
+            <div class="table-actions">
+              <button class="btn-outline">Pilih semua</button>
+              <button class="btn-danger">Hapus</button>
+            </div>
+          </div>
         </section>
+        </div>
       </main>
     </div>
     
@@ -124,22 +144,8 @@
       if(confirmBtn){
         confirmBtn.addEventListener('click', function(e){
           e.preventDefault();
-          // Try to fill CSRF token from a meta tag if available (common in Laravel layouts)
-          var tokenInput = document.getElementById('logout-csrf');
-          var meta = document.querySelector('meta[name="csrf-token"]');
-          if(tokenInput && meta && meta.getAttribute('content')){
-            tokenInput.value = meta.getAttribute('content');
-          }
-          if(logoutForm){
-            // If POST endpoint exists, submit form; otherwise fall back to GET
-            try{
-              logoutForm.submit();
-            }catch(err){
-              window.location.href = '/logout';
-            }
-          } else {
-            window.location.href = '/logout';
-          }
+          // redirect to admin1 page
+          window.location.href = '/admin1';
         });
       }
     })();

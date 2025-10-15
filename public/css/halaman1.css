@@ -51,6 +51,9 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 .visit-form input[type=text]::placeholder{color:rgba(183,28,28,0.6)}
 .visit-form input[type=text]:focus{border-color:var(--accent);box-shadow:0 6px 18px rgba(183,28,28,0.06)}
 
+.visit-form select{width:82%;padding:14px 18px;border-radius:28px;border:2px solid rgba(183,28,28,0.25);font-size:16px;outline:none;background:transparent;color:inherit}
+.visit-form select:focus{border-color:var(--accent);box-shadow:0 6px 18px rgba(183,28,28,0.06)}
+
 .btn-wrap{margin-top:8px}
 .visit-form button{background:var(--accent);color:#fff;border:none;padding:12px 24px;border-radius:6px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(183,28,28,0.18)}
 .visit-form button:hover{background:#9f1717}
@@ -60,3 +63,13 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 	.overlay-form{top:18%;width:92%}
 	.visit-form input[type=text]{width:92%}
 }
+
+/* Checkout modal styles */
+.overlay-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);opacity:0;pointer-events:none;transition:opacity 150ms ease}
+.overlay-modal.open{opacity:1;pointer-events:auto}
+.modal-box{background:#fff;padding:22px;border-radius:12px;min-width:320px;max-width:420px;box-shadow:0 20px 40px rgba(0,0,0,0.15);text-align:center}
+.modal-box h3{margin:0 0 12px;color:var(--accent)}
+.modal-box input[type=text]{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);margin-bottom:10px}
+.modal-actions{display:flex;gap:10px;justify-content:center;margin-top:8px}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+.btn-secondary{background:#eee;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}

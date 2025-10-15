@@ -1,19 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Tamu as TamuController;
 
 Route::get('/', function () {
     return view('halaman1');
 });
 
-// form submit -> redirect to thank you page
-Route::post('/submit-visit', function (\Illuminate\Http\Request $request) {
-    // simple handling: you can validate/save here
-    // $data = $request->validate([ ... ]);
-    return redirect()->route('halaman2');
-})->name('submit.visit');
+// form submit -> handled by Tamu controller
+Route::post('/submit-visit', [TamuController::class, 'store'])->name('submit.visit');
 
 Route::get('/halaman2', function () {
-    return view('adminDashboard');
+    return view('halaman2');
 })->name('halaman2');
 
+Route::get('/admin', [TamuController::class, 'index'])->name('admin.dashboard');

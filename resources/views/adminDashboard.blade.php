@@ -70,6 +70,12 @@
         </section>
 
         <section class="table-wrap">
+          @if(session('success'))
+            <div style="background:#e6ffea;border:1px solid #b7f1c8;padding:8px 12px;margin-bottom:8px;color:#064;">{{ session('success') }}</div>
+          @endif
+          @if(session('error'))
+            <div style="background:#ffe6e6;border:1px solid #f1b7b7;padding:8px 12px;margin-bottom:8px;color:#a00;">{{ session('error') }}</div>
+          @endif
           <div class="table-helpers" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <div class="per-page">
               <form method="get" style="margin:0">

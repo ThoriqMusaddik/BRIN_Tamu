@@ -139,23 +139,35 @@ class Tamu extends Controller
      */
     public function bulkDestroy(Request $request)
     {
-        $ids = $request->input('ids');
-        if (is_string($ids)) {
-            // try decode JSON
-            $decoded = json_decode($ids, true);
+        $idsInput = $request->input('ids');
+
+        // Normalize input: accept JSON string or array
+        if (is_string($idsInput)) {
+            $decoded = json_decode($idsInput, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                $ids = $decoded;
+                $ids = array_map('intval', $decoded);
+            } else {
+                return redirect()->back()->with('error', 'Data ids tidak valid');
             }
+        } elseif (is_array($idsInput)) {
+            $ids = array_map('intval', $idsInput);
+        } else {
+            return redirect()->back()->with('error', 'Data ids tidak ditemukan');
         }
 
-        $data = $request->validate([
-            'ids' => ['required','array'],
-        ]);
+        if (empty($ids)) {
+            return redirect()->back()->with('error', 'Tidak ada data dipilih');
+        }
 
-        // ensure all integers
-        $ids = array_map('intval', $ids);
-        TamuModel::whereIn('id', $ids)->delete();
-        return redirect()->back();
+        // only delete existing ids
+        $existing = TamuModel::whereIn('id', $ids)->pluck('id')->map(function($v){ return (int) $v; })->toArray();
+        if (empty($existing)) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        $deleted = TamuModel::whereIn('id', $existing)->delete();
+
+        return redirect()->back()->with('success', 'Berhasil menghapus ' . count($existing) . ' data');
     }
     
 }

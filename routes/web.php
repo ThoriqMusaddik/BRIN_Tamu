@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Tamu as TamuController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return view('halaman1');
@@ -14,8 +15,11 @@ Route::post('/submit-visit', [TamuController::class, 'store'])->name('submit.vis
 // Halaman terima kasih sudah mengisi form
 Route::get('/halaman2', function () {return view('halaman2');})->name('halaman2');
 
-// admin dashboard 
-Route::get('/admin', [TamuController::class, 'index'])->name('admin.dashboard');
+// admin dashboard (protected)
+Route::get('/admin', [TamuController::class, 'index'])->middleware('auth')->name('admin.dashboard');
+Route::get('/login', function () {return view('admin1');})->name('admin.login');
+Route::post('/login', [AuthController::class, 'login'])->name('admin.login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 // delete single tamu
 Route::delete('/tamu/{id}', [TamuController::class, 'destroy'])->name('tamu.destroy');

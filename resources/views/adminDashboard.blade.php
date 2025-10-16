@@ -184,9 +184,9 @@
       </main>
     </div>
     
-    <!-- Hidden logout form (no Blade directives here to avoid lint errors) -->
-    <form id="logout-form" action="/logout" method="POST" style="display:none;">
-      <input type="hidden" name="_token" id="logout-csrf" value="">
+    <!-- Hidden logout form -->
+    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
+      @csrf
     </form>
 
     <!-- Logout confirmation modal -->
@@ -222,8 +222,8 @@
       if(confirmBtn){
         confirmBtn.addEventListener('click', function(e){
           e.preventDefault();
-          // redirect to admin1 page
-          window.location.href = '/admin1';
+          // submit logout form
+          if(logoutForm) logoutForm.submit();
         });
       }
     })();

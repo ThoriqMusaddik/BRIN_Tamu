@@ -76,7 +76,7 @@ class Tamu extends Controller
     /**
      * Display a listing of tamu for the admin dashboard.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Use Indonesian locale and timezone
         Carbon::setLocale('id');
@@ -104,14 +104,58 @@ class Tamu extends Controller
         $weekCount = TamuModel::whereBetween('created_at', [$weekStart, $weekEnd])->count();
         $total = TamuModel::count();
 
+        // per-page selection (allowed values)
+        $allowed = [10,15,25,50,100];
+        $perPage = (int) $request->query('per_page', 15);
+        if (! in_array($perPage, $allowed)) {
+            $perPage = 15;
+        }
+
         // simple pagination, newest first
-        $tamus = TamuModel::orderBy('id', 'desc')->paginate(15);
+        $tamus = TamuModel::orderBy('id', 'desc')->paginate($perPage)->withQueryString();
         return view('adminDashboard', [
             'tamus' => $tamus,
             'todayCount' => $todayCount,
             'weekCount' => $weekCount,
             'total' => $total,
+            'perPage' => $perPage,
         ]);
+    }
+    
+    /**
+     * Delete a single tamu by id.
+     */
+    public function destroy($id)
+    {
+        $t = TamuModel::find($id);
+        if ($t) {
+            $t->delete();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Bulk delete tamu by array of ids in request->ids
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (is_string($ids)) {
+            // try decode JSON
+            $decoded = json_decode($ids, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $ids = $decoded;
+            }
+        }
+
+        $data = $request->validate([
+            'ids' => ['required','array'],
+        ]);
+
+        // ensure all integers
+        $ids = array_map('intval', $ids);
+        TamuModel::whereIn('id', $ids)->delete();
+        return redirect()->back();
     }
     
 }

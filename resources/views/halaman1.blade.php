@@ -40,6 +40,8 @@
                                 <option value="Fauzan">Fauzan</option>
                                 <option value="Tina">Tina</option>
                             </select>
+                            <label for="stay_until" style="margin-top:8px;display:block;font-size:14px;color:#333">Menginap sampai:</label>
+                            <input type="date" name="stay_until" id="stay_until" value="{{ date('Y-m-d') }}" style="padding:8px;border-radius:6px;border:1px solid #ccc;margin-top:6px;" />
 
                             <div class="btn-wrap">
                                 <button type="submit">LOGIN</button>

@@ -18,5 +18,6 @@ class Tamu extends Model
         'check_out',
         'status',
         'hari',
+        'stay_until',
     ];
 }

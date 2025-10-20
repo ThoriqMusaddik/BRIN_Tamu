@@ -61,11 +61,23 @@ class Tamu extends Controller
         $tamu->tujuan = $validated['tujuan'];
         $tamu->pj = $validated['penanggung_jawab'];
 
+        // stay_until: optional date input; default = today
+        $stayUntilInput = $request->input('stay_until');
         $now = Carbon::now($tz);
+        if ($stayUntilInput) {
+            try {
+                $stayUntil = Carbon::parse($stayUntilInput)->startOfDay();
+            } catch (\Exception $e) {
+                $stayUntil = $now->copy()->startOfDay();
+            }
+        } else {
+            $stayUntil = $now->copy()->startOfDay();
+        }
         // store check_in as time (HH:MM)
-        $tamu->check_in = $now->format('H:i');
+    $tamu->check_in = $now->format('H:i');
         $tamu->check_out = null;
         $tamu->status = 'IN';
+    $tamu->stay_until = $stayUntil->toDateString();
         // hari = Indonesian weekday in uppercase (e.g., SENIN)
         $tamu->hari = strtoupper($now->isoFormat('dddd'));
         $tamu->save();
@@ -84,10 +96,15 @@ class Tamu extends Controller
 
         $now = Carbon::now($tz);
 
-        // Auto-checkout: if a tamu is still 'IN' and was created before today, mark as AUTO_OUT
+        // Auto-checkout: if a tamu is still 'IN' and was created before today AND stay_until < today, mark as AUTO_OUT
         $today = $now->startOfDay();
         $toAuto = TamuModel::where('status', 'IN')
             ->whereDate('created_at', '<', $today->toDateString())
+            ->where(function($q) use ($today){
+                // either stay_until is null or stay_until < today
+                $q->whereNull('stay_until')
+                  ->orWhereDate('stay_until', '<', $today->toDateString());
+            })
             ->get();
 
         foreach ($toAuto as $t) {

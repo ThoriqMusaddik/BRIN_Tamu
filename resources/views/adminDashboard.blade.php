@@ -6,23 +6,7 @@
     <title>Dashboard Admin - Pusat Riset Informasi</title>
     <link rel="stylesheet" href="/css/adminDashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pbVd2X+Y5Y1k2Kq3+6FJH5f7bQn1j6t6K9q1qv5s1Y1V9l3Q2b9Z2y1Xw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-      /* Table layout and checked-out highlight */
-      /* .visitor-table tbody { margin-left: 10px;} */
-  /* Force standard table layout to avoid block/grid rules from external CSS */
-  .visitor-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-  .visitor-table thead { display: table-header-group !important; }
-  .visitor-table tbody { display: table-row-group !important; }
-  .visitor-table thead tr { display: table-row !important; }
-  .visitor-table tbody tr { display: table-row !important; }
-  .visitor-table th, .visitor-table td { padding: 10px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
-  .visitor-table thead th { text-align: left; padding: 12px 12px; background: transparent; color:#333; }
-      /* .visitor-table th:nth-child(3),.visitor-table td:nth-child(3) { width: 150px;}
-      .visitor-table th:nth-child(4),.visitor-table td:nth-child(4) { width: 110px;}
-      .visitor-table th:nth-child(5),.visitor-table td:nth-child(5) { width: 80px;} */
-  tr.checked-out { background: #e6ffea; }
-      .btn-outline{ padding:6px 10px; border-radius:4px; border:1px solid #ccc; background:transparent }
-    </style>
+    
   </head>
   <body>
     <div class="container">
@@ -45,9 +29,15 @@
         </div>
       </aside>
 
+  <!-- Sidebar overlay for mobile -->
+  <div id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
       <main class="main">
         <div class="main-inner">
         <header class="topbar">
+          <button class="sidebar-toggle" aria-label="Buka menu" onclick="toggleSidebar(true)">
+            <i class="fa-solid fa-bars"></i>
+          </button>
           <div class="brand-header">
             <img src="/gambar/brin-logo.png" alt="BRIN" onerror="this.style.display='none'">
             <div class="title">KSL STASIUN BUMI PAREPARE</div>
@@ -103,6 +93,7 @@
                 <th>Tujuan</th>
                 <th>Hari</th>
                 <th>Tanggal</th>
+                <th>Sampai</th>
                 <th>Masuk</th>
                 <th>Keluar</th>
                 <th>Status</th>
@@ -112,19 +103,21 @@
             </thead>
             <tbody>
               @forelse($tamus as $index => $t)
-              <tr class="{{ in_array($t->status, ['OUT','AUTO_OUT']) ? 'checked-out' : '' }}">
-                <td><input type="checkbox" class="select-item" value="{{ $t->id }}" /></td>
-                <td>{{ ($tamus->currentPage()-1) * $tamus->perPage() + $index + 1 }}</td>
-                <td>{{ $t->nama }}</td>
-                <td>{{ $t->asal_instansi }}</td>
-                <td>{{ $t->tujuan }}</td>
-                <td>{{ $t->hari }}</td>
-                <td>{{ optional($t->created_at)->format('d/m/Y') }}</td>
-                <td>{{ $t->check_in ?? '-' }}</td>
-                <td>{{ $t->check_out ?? '-' }}</td>
-                <td>{{ $t->status ?? '-' }}</td>
-                <td>{{ $t->pj ?? '-' }}</td>
-                <td>
+              @php $isStaying = ($t->stay_until && \Illuminate\Support\Carbon::parse($t->stay_until)->startOfDay()->gte(\Illuminate\Support\Carbon::today())); @endphp
+              <tr class="{{ in_array($t->status, ['OUT','AUTO_OUT']) ? 'checked-out' : ($isStaying ? 'staying' : '') }}">
+                <td data-label="Pilih"><input type="checkbox" class="select-item" value="{{ $t->id }}" /></td>
+                <td data-label="No">{{ ($tamus->currentPage()-1) * $tamus->perPage() + $index + 1 }}</td>
+                <td data-label="Nama">{{ $t->nama }}</td>
+                <td data-label="Instansi">{{ $t->asal_instansi }}</td>
+                <td data-label="Tujuan">{{ $t->tujuan }}</td>
+                <td data-label="Hari">{{ $t->hari }}</td>
+                <td data-label="Tanggal">{{ optional($t->created_at)->format('d/m/Y') }}</td>
+                <td data-label="Sampai">{{ $t->stay_until ? \Illuminate\Support\Carbon::parse($t->stay_until)->format('d/m/Y') : '-' }}</td>
+                <td data-label="Masuk">{{ $t->check_in ?? '-' }}</td>
+                <td data-label="Keluar">{{ $t->check_out ?? '-' }}</td>
+                <td data-label="Status">{{ $t->status ?? '-' }}</td>
+                <td data-label="P. Jawab">{{ $t->pj ?? '-' }}</td>
+                <td data-label="Aksi">
                   <form class="delete-form" method="POST" action="{{ route('tamu.destroy', ['id' => $t->id]) }}" style="display:inline">
                     @csrf
                     @method('DELETE')
@@ -133,8 +126,8 @@
                 </td>
               </tr>
               @empty
-              <tr>
-                <td colspan="11" style="text-align:center;">Belum ada data tamu.</td>
+              <tr class="empty-row">
+                <td colspan="13" style="text-align:center;">Belum ada data tamu.</td>
               </tr>
               @endforelse
             </tbody>
@@ -225,6 +218,24 @@
           // submit logout form
           if(logoutForm) logoutForm.submit();
         });
+      }
+    })();
+  </script>
+  <script>
+    // Sidebar toggle for mobile
+    function toggleSidebar(open){
+      var sb = document.querySelector('.sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if(!sb || !overlay) return;
+      if(open){ sb.classList.add('open'); overlay.classList.add('open'); }
+      else { sb.classList.remove('open'); overlay.classList.remove('open'); }
+    }
+    // Wire mobile logout button to show same logout modal
+    (function(){
+      var mobileLogout = document.getElementById('logout-button-mobile');
+      var logoutBtn = document.getElementById('logout-button');
+      if(mobileLogout && logoutBtn){
+        mobileLogout.addEventListener('click', function(e){ e.preventDefault(); logoutBtn.click(); });
       }
     })();
   </script>

@@ -33,7 +33,12 @@
                             @csrf
                             <input type="text" name="nama" placeholder="Nama Lengkap" required>
                             <input type="text" name="instansi" placeholder="Instansi" required>
-                            <input type="text" name="tujuan" placeholder="Tujuan" required>
+                            <select name="tujuan" id="tujuan" required>
+                                <option value="">Pilih Tujuan</option>
+                                <option value="Layanan-data">Layanan Data</option>
+                                <option value="Magang-PKL-BimbinganSkripsi">Magang/PKL/Bimbingan Skripsi</option>
+                                <option value="Maintenance">Maintenance</option>
+                            </select>
                             <select name="penanggung_jawab" id="penanggung_jawab" required>
                                 <option value="">Pilih Penanggung jawab</option>
                                 <option value="Bayu">Bayu</option>

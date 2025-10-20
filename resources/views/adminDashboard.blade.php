@@ -118,11 +118,15 @@
                 <td data-label="Status">{{ $t->status ?? '-' }}</td>
                 <td data-label="P. Jawab">{{ $t->pj ?? '-' }}</td>
                 <td data-label="Aksi">
-                  <form class="delete-form" method="POST" action="{{ route('tamu.destroy', ['id' => $t->id]) }}" style="display:inline">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn-delete" title="Hapus" type="submit">🗑</button>
-                  </form>
+                    @if(auth()->check() && auth()->user()->isResepsionis())
+                      <span style="color:#777;font-size:0.9em">Tidak ada aksi</span>
+                    @else
+                      <form class="delete-form" method="POST" action="{{ route('tamu.destroy', ['id' => $t->id]) }}" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn-delete" title="Hapus" type="submit">🗑️</button>
+                      </form>
+                    @endif
                 </td>
               </tr>
               @empty
@@ -164,12 +168,16 @@
               @endif
             </div>
             <div class="table-actions">
-              <button id="select-all-btn" class="btn-outline">Pilih semua</button>
-              <form id="bulk-delete-form" method="POST" action="{{ route('tamu.bulkDestroy') }}" style="display:inline">
-                @csrf
-                <input type="hidden" name="ids" id="bulk-ids" />
-                <button id="bulk-delete-btn" class="btn-danger" type="button">Hapus</button>
-              </form>
+                @if(auth()->check() && auth()->user()->isResepsionis())
+                  <span style="color:#777">Anda sebagai resepsionis hanya dapat melihat data dan merekap.</span>
+                @else
+                  <button id="select-all-btn" class="btn-outline">Pilih semua</button>
+                  <form id="bulk-delete-form" method="POST" action="{{ route('tamu.bulkDestroy') }}" style="display:inline">
+                    @csrf
+                    <input type="hidden" name="ids" id="bulk-ids" />
+                    <button id="bulk-delete-btn" class="btn-danger" type="button">Hapus</button>
+                  </form>
+                @endif
             </div>
           </div>
         </section>

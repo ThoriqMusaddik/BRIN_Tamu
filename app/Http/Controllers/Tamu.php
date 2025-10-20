@@ -144,6 +144,11 @@ class Tamu extends Controller
      */
     public function destroy($id)
     {
+        // Only allow non-resepsionis to delete
+        if (auth()->check() && auth()->user()->isResepsionis()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menghapus data.');
+        }
+
         $t = TamuModel::find($id);
         if ($t) {
             $t->delete();
@@ -156,6 +161,11 @@ class Tamu extends Controller
      */
     public function bulkDestroy(Request $request)
     {
+        // Only allow non-resepsionis to bulk delete
+        if (auth()->check() && auth()->user()->isResepsionis()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menghapus data.');
+        }
+
         $idsInput = $request->input('ids');
 
         // Normalize input: accept JSON string or array

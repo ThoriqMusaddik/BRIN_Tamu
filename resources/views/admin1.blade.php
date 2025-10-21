@@ -71,8 +71,8 @@
 
                 <div class="overlay-form">
                     <div class="overlay-inner">
-                        <h1>Admin & Resepsionis Login.</h1>
-                        <p class="lead">Sistem Buku Otomatis.</p>
+                        <h1>Admin & Resepsionis Login</h1>
+                        <p class="lead">Sistem Buku Otomatis</p>
 
                         <form class="visit-form" action="{{ route('admin.login.post') }}" method="post">
                             @csrf

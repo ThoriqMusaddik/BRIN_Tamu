@@ -27,7 +27,7 @@
                 <div class="overlay-form">
                     <div class="overlay-inner">
                         <h1>TERIMA KASIH</h1>
-                        <p class="lead">data kunjungan anda berhasil</p>
+                        <p class="lead">data kunjungan anda berhasil dikirim</p>
 <!-- 
                         <form class="visit-form" action="{{ route('submit.visit') }}" method="post">
                             @csrf

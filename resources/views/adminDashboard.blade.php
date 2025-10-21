@@ -6,13 +6,14 @@
     <title>Dashboard Admin - Pusat Riset Informasi</title>
     <link rel="stylesheet" href="/css/adminDashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pbVd2X+Y5Y1k2Kq3+6FJH5f7bQn1j6t6K9q1qv5s1Y1V9l3Q2b9Z2y1Xw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
   </head>
   <body>
     <div class="container">
       <aside class="sidebar">
         <div class="brand">
           <img src="/gambar/brin-logo.png" alt="BRIN" class="brand-logo" onerror="this.style.display='none'">
-          <h2>Dashboard Admin</h2>
+          <h2>Admin Operation</h2>
         </div>
 
         <nav class="nav">
@@ -28,9 +29,15 @@
         </div>
       </aside>
 
+  <!-- Sidebar overlay for mobile -->
+  <div id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
       <main class="main">
         <div class="main-inner">
         <header class="topbar">
+          <button class="sidebar-toggle" aria-label="Buka menu" onclick="toggleSidebar(true)">
+            <i class="fa-solid fa-bars"></i>
+          </button>
           <div class="brand-header">
             <img src="/gambar/brin-logo.png" alt="BRIN" onerror="this.style.display='none'">
             <div class="title">KSL STASIUN BUMI PAREPARE</div>
@@ -40,28 +47,53 @@
         <section class="stats">
           <div class="card">
             <div class="card-title">Kunjungan Hari ini</div>
-            <div class="card-value">125</div>
+            <div class="card-value">{{ $todayCount ?? 0 }}</div>
           </div>
           <div class="card">
             <div class="card-title">Kunjungan Minggu ini</div>
-            <div class="card-value">125</div>
+            <div class="card-value">{{ $weekCount ?? 0 }}</div>
           </div>
           <div class="card">
             <div class="card-title">Total Tamu</div>
-            <div class="card-value">125.K</div>
+            <div class="card-value">{{ $total ?? 0 }}</div>
           </div>
         </section>
 
         <section class="table-wrap">
+          @if(session('success'))
+            <div style="background:#e6ffea;border:1px solid #b7f1c8;padding:8px 12px;margin-bottom:8px;color:#064;">{{ session('success') }}</div>
+          @endif
+          @if(session('error'))
+            <div style="background:#ffe6e6;border:1px solid #f1b7b7;padding:8px 12px;margin-bottom:8px;color:#a00;">{{ session('error') }}</div>
+          @endif
+          <div class="table-helpers" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div class="per-page">
+              <form method="get" style="margin:0">
+                <label for="per_page">Items per halaman:</label>
+                <select name="per_page" id="per_page" onchange="this.form.submit()">
+                  @foreach([10,15,25,50,100] as $n)
+                    <option value="{{ $n }}" {{ (isset($perPage) && $perPage == $n) ? 'selected' : '' }}>{{ $n }}</option>
+                  @endforeach
+                </select>
+              </form>
+            </div>
+            <div class="items-summary">
+              @if($tamus->total() > 0)
+                Menampilkan {{ $tamus->firstItem() }} - {{ $tamus->lastItem() }} dari {{ $tamus->total() }} tamu
+              @endif
+            </div>
+          </div>
           <table class="visitor-table">
             <thead>
               <tr>
+                <th><input type="checkbox" id="select-all-top" /></th>
                 <th>No</th>
                 <th>Nama</th>
                 <th>Instansi</th>
                 <th>Tujuan</th>
                 <th>Hari</th>
-                <th>tgl/bln/thun</th>
+                <th>Tanggal</th>
+                <th>Sampai</th>
                 <th>Masuk</th>
                 <th>Keluar</th>
                 <th>Status</th>
@@ -70,35 +102,82 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Each row is a single rounded card spanning all columns -->
-              <!-- <tr>
-                <td colspan="11">
-                  <div class="row-card">
-                    <div class="col no">1</div>
-                    <div class="col nama">Bayu</div>
-                    <div class="col instansi">ITH</div>
-                    <div class="col tujuan">BRIN</div>
-                    <div class="col hari">SENIN</div>
-                    <div class="col tgl">12/01/025</div>
-                    <div class="col masuk">07:30</div>
-                    <div class="col keluar">-</div>
-                    <div class="col status">-</div>
-                    <div class="col pj">Kawasan</div>
-                  </div>
+              @forelse($tamus as $index => $t)
+              @php $isStaying = ($t->stay_until && \Illuminate\Support\Carbon::parse($t->stay_until)->startOfDay()->gte(\Illuminate\Support\Carbon::today())); @endphp
+              <tr class="{{ in_array($t->status, ['OUT','AUTO_OUT']) ? 'checked-out' : ($isStaying ? 'staying' : '') }}">
+                <td data-label="Pilih"><input type="checkbox" class="select-item" value="{{ $t->id }}" /></td>
+                <td data-label="No">{{ ($tamus->currentPage()-1) * $tamus->perPage() + $index + 1 }}</td>
+                <td data-label="Nama">{{ $t->nama }}</td>
+                <td data-label="Instansi">{{ $t->asal_instansi }}</td>
+                <td data-label="Tujuan">{{ $t->tujuan }}</td>
+                <td data-label="Hari">{{ $t->hari }}</td>
+                <td data-label="Tanggal">{{ optional($t->created_at)->format('d/m/Y') }}</td>
+                <td data-label="Sampai">{{ $t->stay_until ? \Illuminate\Support\Carbon::parse($t->stay_until)->format('d/m/Y') : '-' }}</td>
+                <td data-label="Masuk">{{ $t->check_in ?? '-' }}</td>
+                <td data-label="Keluar">{{ $t->check_out ?? '-' }}</td>
+                <td data-label="Status">{{ $t->status ?? '-' }}</td>
+                <td data-label="P. Jawab">{{ $t->pj ?? '-' }}</td>
+                <td data-label="Aksi">
+                    @if(auth()->check() && auth()->user()->isResepsionis())
+                      <span style="color:#777;font-size:0.9em">Tidak ada aksi</span>
+                    @else
+                      <form class="delete-form" method="POST" action="{{ route('tamu.destroy', ['id' => $t->id]) }}" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn-delete" title="Hapus" type="submit">🗑️</button>
+                      </form>
+                    @endif
                 </td>
-              </tr> -->
+              </tr>
+              @empty
+              <tr class="empty-row">
+                <td colspan="13" style="text-align:center;">Belum ada data tamu.</td>
+              </tr>
+              @endforelse
             </tbody>
           </table>
           <!-- pagination and actions -->
           <div class="table-controls">
             <div class="pagination">
-              <button class="page-btn prev">← Prev</button>
-              <div class="pages"><button class="page active">1</button><button class="page">2</button><button class="page">3</button><button class="page">4</button><button class="page">5</button></div>
-              <button class="page-btn next">Next →</button>
+              @if($tamus->lastPage() > 1)
+                @php $query = request()->query(); @endphp
+                {{-- Prev --}}
+                @if($tamus->onFirstPage())
+                  <button class="page-btn" disabled>← Prev</button>
+                @else
+                  <a class="page-btn" href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $tamus->currentPage() - 1])) }}">← Prev</a>
+                @endif
+
+                {{-- Pages --}}
+                <div class="pages">
+                  @for($i = 1; $i <= $tamus->lastPage(); $i++)
+                    @if($i == $tamus->currentPage())
+                      <span class="page active">{{ $i }}</span>
+                    @else
+                      <a class="page" href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $i])) }}">{{ $i }}</a>
+                    @endif
+                  @endfor
+                </div>
+
+                {{-- Next --}}
+                @if($tamus->hasMorePages())
+                  <a class="page-btn" href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $tamus->currentPage() + 1])) }}">Next →</a>
+                @else
+                  <button class="page-btn" disabled>Next →</button>
+                @endif
+              @endif
             </div>
             <div class="table-actions">
-              <button class="btn-outline">Pilih semua</button>
-              <button class="btn-danger">Hapus</button>
+                @if(auth()->check() && auth()->user()->isResepsionis())
+                  <span style="color:#777">Anda sebagai resepsionis hanya dapat melihat data dan merekap.</span>
+                @else
+                  <button id="select-all-btn" class="btn-outline">Pilih semua</button>
+                  <form id="bulk-delete-form" method="POST" action="{{ route('tamu.bulkDestroy') }}" style="display:inline">
+                    @csrf
+                    <input type="hidden" name="ids" id="bulk-ids" />
+                    <button id="bulk-delete-btn" class="btn-danger" type="button">Hapus</button>
+                  </form>
+                @endif
             </div>
           </div>
         </section>
@@ -106,9 +185,9 @@
       </main>
     </div>
     
-    <!-- Hidden logout form (no Blade directives here to avoid lint errors) -->
-    <form id="logout-form" action="/logout" method="POST" style="display:none;">
-      <input type="hidden" name="_token" id="logout-csrf" value="">
+    <!-- Hidden logout form -->
+    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
+      @csrf
     </form>
 
     <!-- Logout confirmation modal -->
@@ -144,10 +223,74 @@
       if(confirmBtn){
         confirmBtn.addEventListener('click', function(e){
           e.preventDefault();
-          // redirect to admin1 page
-          window.location.href = '/admin1';
+          // submit logout form
+          if(logoutForm) logoutForm.submit();
         });
       }
+    })();
+  </script>
+  <script>
+    // Sidebar toggle for mobile
+    function toggleSidebar(open){
+      var sb = document.querySelector('.sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if(!sb || !overlay) return;
+      if(open){ sb.classList.add('open'); overlay.classList.add('open'); }
+      else { sb.classList.remove('open'); overlay.classList.remove('open'); }
+    }
+    // Wire mobile logout button to show same logout modal
+    (function(){
+      var mobileLogout = document.getElementById('logout-button-mobile');
+      var logoutBtn = document.getElementById('logout-button');
+      if(mobileLogout && logoutBtn){
+        mobileLogout.addEventListener('click', function(e){ e.preventDefault(); logoutBtn.click(); });
+      }
+    })();
+  </script>
+  <script>
+    // Selection and bulk delete handling
+    (function(){
+      var selectAllTop = document.getElementById('select-all-top');
+      var selectAllBtn = document.getElementById('select-all-btn');
+      var bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+      var bulkDeleteForm = document.getElementById('bulk-delete-form');
+      var bulkIdsInput = document.getElementById('bulk-ids');
+
+      function getCheckboxes(){ return Array.prototype.slice.call(document.querySelectorAll('.select-item')); }
+
+      if(selectAllTop){
+        selectAllTop.addEventListener('change', function(e){
+          var checked = !!e.target.checked;
+          getCheckboxes().forEach(function(cb){ cb.checked = checked; });
+        });
+      }
+
+      if(selectAllBtn){
+        selectAllBtn.addEventListener('click', function(e){ e.preventDefault();
+          var all = getCheckboxes(); var anyUnchecked = all.some(function(cb){ return !cb.checked; });
+          all.forEach(function(cb){ cb.checked = anyUnchecked; });
+          if(selectAllTop) selectAllTop.checked = anyUnchecked;
+        });
+      }
+
+      if(bulkDeleteBtn){
+        bulkDeleteBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          var selected = getCheckboxes().filter(function(cb){ return cb.checked; }).map(function(cb){ return cb.value; });
+          if(selected.length === 0){ alert('Pilih minimal satu data untuk dihapus.'); return; }
+          if(!confirm('Hapus ' + selected.length + ' data?')) return;
+          // set hidden input value as JSON or comma separated
+          bulkIdsInput.value = JSON.stringify(selected);
+          bulkDeleteForm.submit();
+        });
+      }
+      // add confirmation to single delete forms
+      var deleteForms = Array.prototype.slice.call(document.querySelectorAll('.delete-form'));
+      deleteForms.forEach(function(f){
+        f.addEventListener('submit', function(ev){
+          if(!confirm('Hapus data ini?')){ ev.preventDefault(); }
+        });
+      });
     })();
   </script>
 </html>

@@ -165,3 +165,9 @@ tr.staying { background: #fff7e6; }
 .modal-actions{display:flex;gap:12px;justify-content:center}
 .btn-yes{background:var(--red-2);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
 .btn-no{background:#eee;color:#333;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+
+/* Rekapan modal tweaks (reuses modal styles) */
+#rekapan-modal .modal{max-width:420px;padding:18px}
+#rekapan-modal select{font-size:15px}
+#rekapan-modal .btn-yes{background:#2e7d32} /* Excel: green */
+#rekapan-modal .btn-no{background:#b92b2b;color:#fff} /* PDF: red */

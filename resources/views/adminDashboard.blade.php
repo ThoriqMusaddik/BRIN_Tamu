@@ -18,7 +18,7 @@
 
         <nav class="nav">
           <a class="nav-item active"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a>
-          <a class="nav-item"><i class="fa-regular fa-file-lines"></i> <span>Rekapan</span></a>
+          <a class="nav-item" id="rekapan-btn" href="#"><i class="fa-regular fa-file-lines"></i> <span>Rekapan</span></a>
         </nav>
 
         <div class="logout">
@@ -96,6 +96,7 @@
                 <th>Sampai</th>
                 <th>Masuk</th>
                 <th>Keluar</th>
+                <th>Jumlah</th>
                 <th>Status</th>
                 <th>P. Jawab</th>
                 <th></th>
@@ -201,6 +202,36 @@
         </div>
       </div>
     </div>
+
+    <!-- Rekapan modal -->
+    <div id="rekapan-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rekapan-title">
+        <h3 id="rekapan-title">REKAPAN BULANAN</h3>
+        <div style="width:100%;max-width:360px;margin-top:8px;">
+          <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Bulan</label>
+          <select id="rekapan-bulan" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
+            <option value="">Pilih Bulan</option>
+            @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $idx => $nama)
+              <option value="{{ $idx+1 }}">{{ $nama }}</option>
+            @endforeach
+          </select>
+
+          <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Tahun</label>
+          <select id="rekapan-tahun" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
+            <option value="">Pilih Tahun</option>
+            @php $start = date('Y') - 5; $end = date('Y') + 1; @endphp
+            @for($y = $start; $y <= $end; $y++)
+              <option value="{{ $y }}">{{ $y }}</option>
+            @endfor
+          </select>
+
+          <div class="modal-actions" style="margin-top:8px;display:flex;gap:10px;justify-content:center">
+            <button id="download-excel" class="btn-yes">Download Excel</button>
+            <button id="download-pdf" class="btn-no">Download PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
   <script>
     (function(){
@@ -291,6 +322,31 @@
           if(!confirm('Hapus data ini?')){ ev.preventDefault(); }
         });
       });
+    })();
+  </script>
+  <script>
+    // Rekapan modal: open/close and download handlers
+    (function(){
+      var rekBtn = document.getElementById('rekapan-btn');
+      var rekModal = document.getElementById('rekapan-modal');
+      var rekExcel = document.getElementById('download-excel');
+      var rekPdf = document.getElementById('download-pdf');
+
+      function showRek(){ if(rekModal){ rekModal.setAttribute('aria-hidden','false'); rekModal.classList.add('open'); } }
+      function hideRek(){ if(rekModal){ rekModal.setAttribute('aria-hidden','true'); rekModal.classList.remove('open'); } }
+
+      if(rekBtn){ rekBtn.addEventListener('click', function(e){ e.preventDefault(); showRek(); }); }
+      if(rekModal){ rekModal.addEventListener('click', function(e){ if(e.target === rekModal) hideRek(); }); }
+
+      function collectParams(){
+        var bulan = document.getElementById('rekapan-bulan').value;
+        var tahun = document.getElementById('rekapan-tahun').value;
+        if(!bulan || !tahun){ alert('Pilih bulan dan tahun terlebih dahulu.'); return null; }
+        return { bulan: bulan, tahun: tahun };
+      }
+
+      if(rekExcel){ rekExcel.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = '/rekapan/export/excel?bulan='+p.bulan+'&tahun='+p.tahun; window.location = url; }); }
+      if(rekPdf){ rekPdf.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = '/rekapan/export/pdf?bulan='+p.bulan+'&tahun='+p.tahun; window.location = url; }); }
     })();
   </script>
 </html>

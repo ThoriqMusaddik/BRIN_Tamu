@@ -49,7 +49,13 @@
                 }
                 .visit-form .input-field { font-family: inherit; }
                 .visit-form .btn-wrap{margin-top:12px}
-                .visit-form button[type="submit"]{background:#b51b1b;color:#fff;padding:10px 18px;border-radius:8px;border:none;cursor:pointer}
+                .visit-form button{background:#b51b1b;color:#fff;padding:10px 18px;border-radius:8px;border:none;cursor:pointer}
+
+                /* Footer */
+                .site-footer{display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 0;margin-top:18px;border-top:1px solid rgba(0,0,0,0.06);color:#333}
+                .site-footer img{width:28px;height:28px;object-fit:contain}
+                .site-footer .meta{font-size:14px;color:#333}
+                .site-footer .meta .email{display:block;font-weight:600;margin-top:4px}
             </style>
     </head>
     <body>
@@ -118,6 +124,19 @@
                     </div>
                 </div>
             </section>
+            
+            <footer class="site-footer">
+                <img src="{{ asset('gambar/logo ig.png') }}" alt="IG logo" onerror="this.style.display='none'">
+                <div class="meta">
+                    <div>call.me.riq</div>
+                    <div class="email">Email : Thoariqmusaddik@gmail.com</div>
+                </div>
+                <img src="{{ asset('gambar/logo ig.png') }}" alt="IG logo" onerror="this.style.display='none'">
+                <div class="meta">
+                    <div>Fau4732</div>
+                    <div class="email">Email : muhammadfauzaniskandar241@gmail.com</div>
+                </div>
+            </footer>
         </div>
     </body>
 </html>

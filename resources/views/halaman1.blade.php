@@ -32,8 +32,8 @@
                         <form class="visit-form" action="{{ route('submit.visit') }}" method="post">
                             @csrf
                             <input type="text" name="nama" placeholder="Nama Lengkap" required>
-                            <input type="text" name="nama" placeholder="Nomor HP/Email" required>
-                            <input type="number" name="nama" placeholder="Jumlah" required inputmode="tel">
+                            <input type="text" name="kontak" placeholder="Nomor HP / Email" required>
+                            <input type="number" name="jumlah_orang" placeholder="Jumlah Orang" required min="1" inputmode="numeric">
                             <input type="text" name="instansi" placeholder="Instansi" required>
                             <select name="tujuan" id="tujuan" required>
                                 <option value="">Pilih Tujuan</option>

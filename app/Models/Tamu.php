@@ -19,5 +19,8 @@ class Tamu extends Model
         'status',
         'hari',
         'stay_until',
+        'jumlah_orang',
+        'kontak',
+        'keterangan',
     ];
 }

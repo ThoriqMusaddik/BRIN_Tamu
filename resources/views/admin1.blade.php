@@ -50,6 +50,9 @@
                 .visit-form .input-field { font-family: inherit; }
                 .visit-form .btn-wrap{margin-top:12px}
                 .visit-form button{background:#b51b1b;color:#fff;padding:10px 18px;border-radius:8px;border:none;cursor:pointer}
+                /* Ensure overlay is above other content and visible */
+                .overlay-form { position: fixed !important; display: block !important; z-index: 99999 !important; top: 8% !important; left: 50% !important; transform: translateX(-50%) !important; width: 90% !important; max-width: 820px !important; }
+                .overlay-inner { z-index: 100000 !important; }
 
                 /* Footer */
                 .site-footer{display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 0;margin-top:18px;border-top:1px solid rgba(0,0,0,0.06);color:#333}
@@ -75,7 +78,7 @@
                     <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div>
                 </div>
 
-                <div class="overlay-form">
+                <div class="overlay-form open">
                     <div class="overlay-inner">
                         <h1>Admin & Resepsionis Login</h1>
                         <p class="lead">Sistem Buku Otomatis</p>

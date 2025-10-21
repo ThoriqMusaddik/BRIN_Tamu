@@ -57,7 +57,7 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 .overlay-form.open::before{
 	/* backdrop */
 	content: '';
-	position: absolute;
+	position: relative;
 	inset: 0;
 	background: rgba(0,0,0,0.45);
 	backdrop-filter: blur(2px);

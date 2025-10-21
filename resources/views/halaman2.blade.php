@@ -12,7 +12,7 @@
             <header class="header">
                 <div class="header-inner">
                     <img src="{{ asset('gambar/logo.png') }}" alt="BRIN" class="logo" />
-                    <div class="title">Pusat Riset Informasi</div>
+                    <div class="title">KSL STASIUN BUMI PAREPARE</div>
                 </div>
             </header>
 
@@ -21,7 +21,7 @@
                     <div class="card card-tl" style="background-image: url('{{ asset('gambar/bg1.jpg') }}');" aria-hidden="true"></div>
                     <div class="card card-tr" style="background-image: url('{{ asset('gambar/bg2.jpg') }}');" aria-hidden="true"></div>
                     <div class="card card-bl" style="background-image: url('{{ asset('gambar/bg3.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-br" style="background-image: url('{{ asset('gambar/bg3.jpg') }}');" aria-hidden="true"></div>
+                    <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div>
                 </div>
 
                 <div class="overlay-form">

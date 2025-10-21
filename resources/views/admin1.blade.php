@@ -64,6 +64,11 @@
                     <div>call.me.riq</div>
                     <div class="email">Email : Thoariqmusaddik@gmail.com</div>
                 </div>
+                <img src="{{ asset('gambar/logo ig.png') }}" alt="IG logo" onerror="this.style.display='none'">
+                <div class="meta">
+                    <div>Fau4732</div>
+                    <div class="email">Email : muhammadfauzaniskandar241@gmail.com</div>
+                </div>
             </footer>
         </div>
     </body>

@@ -20,6 +20,7 @@ Route::get('/admin', [TamuController::class, 'index'])->middleware('auth')->name
 Route::get('/login', function () {return view('admin1');})->name('admin.login');
 Route::post('/login', [AuthController::class, 'login'])->name('admin.login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+Route::get('/admin2', function () {return view('adminDashboard');})->name('admin.login2');
 
 // delete single tamu (protected)
 Route::delete('/tamu/{id}', [TamuController::class, 'destroy'])->middleware('auth')->name('tamu.destroy');

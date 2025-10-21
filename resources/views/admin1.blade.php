@@ -38,7 +38,7 @@
                     <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div>
                 </div>
 
-                <div class="overlay-form">
+                <div class="overlay-form open">
                     <div class="overlay-inner">
                         <h1>Admin Login.</h1>
                         <p class="lead">Sistem Buku Otomatis.</p>

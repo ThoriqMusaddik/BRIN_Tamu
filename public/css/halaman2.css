@@ -40,7 +40,11 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 .card.card-tr { background-image: url('/gambar/bg2.jpg'); }
 .card.card-bl { background-image: url('/gambar/bg3.jpg'); }
 .card.card-br { background-image: url('/gambar/bg4.jpg'); }
-
+.overlay-form.open {
+	display:flex;
+	opacity:1;
+	pointer-events:auto;
+}
 .overlay-form{
 	/* hidden by default; becomes popup when .open is present */
 	position:fixed;

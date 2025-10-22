@@ -91,6 +91,7 @@
         <div id="checkout-modal" class="overlay-modal" aria-hidden="true">
             <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
                 <h3 id="checkout-title">Check out</h3>
+                <div id="checkout-error" class="alert alert-error" style="display: none"></div>
                 <form id="checkout-form" action="{{ route('submit.visit') }}" method="post">
                     @csrf
                     <input type="hidden" name="mode" value="checkout">
@@ -105,6 +106,47 @@
         </div>
     </body>
     <script>
+        function showError(message) {
+            const errorDiv = document.getElementById('checkout-error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('checkout-error');
+            errorDiv.style.display = 'none';
+        }
+
+        // Handle checkout form submission
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+            hideError(); // Clear any previous errors
+
+            const form = this;
+            const formData = new FormData(form);
+            
+            // Send AJAX request
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect on success
+                    window.location.href = data.redirect;
+                } else {
+                    // Show error message
+                    showError(data.message);
+                }
+            })
+            .catch(error => {
+                showError('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        });
         (function(){
             var openBtn = document.getElementById('checkout-button');
             var modal = document.getElementById('checkout-modal');

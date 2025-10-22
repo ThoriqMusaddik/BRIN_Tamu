@@ -36,14 +36,32 @@ class Tamu extends Controller
                 ->latest('id')
                 ->first();
 
-            if ($tamu) {
-                $now = Carbon::now($tz);
-                $tamu->check_out = $now->format('H:i');
-                $tamu->status = 'OUT';
-                $tamu->save();
+            if (!$tamu) {
+                // No matching visitor found with the given name and institution that is still checked in
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data tamu tidak ditemukan atau sudah melakukan check out sebelumnya.'
+                    ]);
+                }
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Data tamu tidak ditemukan atau sudah melakukan check out sebelumnya.');
             }
 
-            return redirect()->route('halaman2');
+            $now = Carbon::now($tz);
+            $tamu->check_out = $now->format('H:i');
+            $tamu->status = 'OUT';
+            $tamu->save();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Check out berhasil.',
+                    'redirect' => route('halaman2')
+                ]);
+            }
+            return redirect()->route('halaman2')->with('success', 'Check out berhasil.');
         }
 
         // Normal check-in flow
@@ -62,8 +80,8 @@ class Tamu extends Controller
         $tamu->asal_instansi = $validated['instansi'];
         $tamu->tujuan = $validated['tujuan'];
         $tamu->pj = $validated['penanggung_jawab'];
-    $tamu->kontak = $request->input('kontak');
-    $tamu->jumlah_orang = $request->input('jumlah_orang') ? (int) $request->input('jumlah_orang') : 1;
+        $tamu->kontak = $request->input('kontak');
+        $tamu->jumlah_orang = $request->input('jumlah_orang') ? (int) $request->input('jumlah_orang') : 1;
 
         // stay_until: optional date input; default = today
         $stayUntilInput = $request->input('stay_until');
@@ -78,10 +96,10 @@ class Tamu extends Controller
             $stayUntil = $now->copy()->startOfDay();
         }
         // store check_in as time (HH:MM)
-    $tamu->check_in = $now->format('H:i');
+        $tamu->check_in = $now->format('H:i');
         $tamu->check_out = null;
         $tamu->status = 'IN';
-    $tamu->stay_until = $stayUntil->toDateString();
+        $tamu->stay_until = $stayUntil->toDateString();
         // hari = Indonesian weekday in uppercase (e.g., SENIN)
         $tamu->hari = strtoupper($now->isoFormat('dddd'));
         $tamu->save();

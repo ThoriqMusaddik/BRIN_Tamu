@@ -61,7 +61,7 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 .overlay-form.open::before{
 	/* backdrop */
 	content: '';
-	position: relative;
+	position: absolute;
 	inset: 0;
 	background: rgba(0,0,0,0.45);
 	backdrop-filter: blur(2px);
@@ -81,7 +81,7 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 .overlay-inner .btn.ok{background:#2e7d32;color:#fff}
 .overlay-inner .btn.cancel{background:#eee;color:#333}
 .overlay-inner h1{color:var(--accent);font-size:36px;margin:0 0 6px;font-weight:800}
-.overlay-inner .lead{color:rgba(0,0,0,1);margin:0 0 20px;font-weight: bold;}
+.overlay-inner .lead{color:rgba(0,0,0,0.45);margin:0 0 20px}
 
 .visit-form{display:flex;flex-direction:column;align-items:center;gap:14px}
 .visit-form input[type=text]{width:82%;padding:14px 18px;border-radius:28px;border:2px solid rgba(183,28,28,0.25);font-size:16px;outline:none;background:transparent}

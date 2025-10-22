@@ -32,15 +32,32 @@
                         <form class="visit-form" action="{{ route('submit.visit') }}" method="post">
                             @csrf
                             <input type="text" name="nama" placeholder="Nama Lengkap" required>
+                            <input type="text" name="kontak" placeholder="Nomor HP / Email" required>
+                            <input type="number" name="jumlah_orang" placeholder="Jumlah Orang" required min="1" inputmode="numeric">
                             <input type="text" name="instansi" placeholder="Instansi" required>
-                            <input type="text" name="tujuan" placeholder="Tujuan" required>
+                            <select name="tujuan" id="tujuan" required>
+                                <option value="">Pilih Tujuan</option>
+                                <option value="Layanan-data">Layanan Data Citra</option>
+                                <option value="Layanan-data">Kunjungan Edukasi</option>
+                                <option value="Layanan-data">Sosialisasi Produk</option>
+                                <option value="Layanan-data">Internal BRIN</option>
+                                <option value="Magang-PKL-BimbinganSkripsi">Magang/PKL/Bimbingan Skripsi</option>
+                                <option value="Maintenance">Maintenance</option>
+                            </select>
                             <select name="penanggung_jawab" id="penanggung_jawab" required>
                                 <option value="">Pilih Penanggung jawab</option>
-                                <option value="Bayu">Bayu</option>
-                                <option value="Fauzan">Fauzan</option>
-                                <option value="Tina">Tina</option>
+                                <option value="Tuti Asriani">Riski Wahyuningrum</option>
+                                <option value="Hasniaty">Hasniaty</option>
+                                <option value="Taufik Syam">Taufik Syam</option>
+                                <option value="Andi Adyatma">Andi Adyatma</option>
+                                <option value="Tuti Asriani">Tuti Asriani</option>
+                                <option value="Indri">Indri</option>
+                                <option value="Imran A">Imran A</option>
+                                <option value="Marli">Marli</option>
+                                <option value="Lewi">Lewi</option>
+                                <option value="Vendor/TDP">Vendor/TDP</option>
                             </select>
-                            <label for="stay_until" style="margin-top:8px;display:block;font-size:14px;color:#333">Menginap sampai:</label>
+                            <label for="stay_until" style="margin-top:8px;display:block;font-size:14px;color:#333">Tanggal Kunjungan sampai Dengan:</label>
                             <input type="date" name="stay_until" id="stay_until" value="{{ date('Y-m-d') }}" style="padding:8px;border-radius:6px;border:1px solid #ccc;margin-top:6px;" />
 
                             <div class="btn-wrap">
@@ -51,6 +68,23 @@
                     </div>
                 </div>
             </section>
+            <!-- Footer: two items inline -->
+            <footer class="site-footer">
+                <div class="site-footer-item">
+                    <img src="{{ asset('gambar/logo ig.png') }}" alt="IG" onerror="this.style.display='none'" />
+                    <div class="meta">
+                        <div>call.me.riq</div>
+                        <div class="email">Email : Thoariqmusaddik@gmail.com</div>
+                    </div>
+                </div>
+                <div class="site-footer-item">
+                    <img src="{{ asset('gambar/logo ig.png') }}" alt="IG" onerror="this.style.display='none'" />
+                    <div class="meta">
+                        <div>Fau4732</div>
+                        <div class="email">Email : muhammadfauzaniskandar241@gmail.com</div>
+                    </div>
+                </div>
+            </footer>
         </div>
 
         <!-- Check-out modal: only Nama & Instansi -->

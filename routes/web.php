@@ -21,8 +21,15 @@ Route::get('/login', function () {return view('admin1');})->name('admin.login');
 Route::post('/login', [AuthController::class, 'login'])->name('admin.login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-// delete single tamu
-Route::delete('/tamu/{id}', [TamuController::class, 'destroy'])->name('tamu.destroy');
+// delete single tamu (protected)
+Route::delete('/tamu/{id}', [TamuController::class, 'destroy'])->middleware('auth')->name('tamu.destroy');
 
-// bulk delete tamu (expects 'ids' array)
-Route::post('/tamu/bulk-delete', [TamuController::class, 'bulkDestroy'])->name('tamu.bulkDestroy');
+// bulk delete tamu (expects 'ids' array) (protected)
+Route::post('/tamu/bulk-delete', [TamuController::class, 'bulkDestroy'])->middleware('auth')->name('tamu.bulkDestroy');
+
+// update keterangan (admin only)
+Route::post('/tamu/{id}/keterangan', [TamuController::class, 'updateKeterangan'])->middleware('auth')->name('tamu.updateKeterangan');
+
+// Rekapan exports (protected)
+Route::get('/rekapan/export/excel', [\App\Http\Controllers\RekapanController::class, 'exportExcel'])->middleware('auth')->name('rekapan.export.excel');
+Route::get('/rekapan/export/pdf', [\App\Http\Controllers\RekapanController::class, 'exportPdf'])->middleware('auth')->name('rekapan.export.pdf');

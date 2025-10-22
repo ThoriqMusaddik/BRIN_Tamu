@@ -52,6 +52,8 @@ class Tamu extends Controller
             'instansi' => ['required','string','max:255'],
             'tujuan' => ['required','string','max:255'],
             'penanggung_jawab' => ['required','string','max:255'],
+            'kontak' => ['nullable','string','max:255'],
+            'jumlah_orang' => ['nullable','integer','min:1'],
         ]);
 
         // Map form fields to model columns
@@ -60,6 +62,8 @@ class Tamu extends Controller
         $tamu->asal_instansi = $validated['instansi'];
         $tamu->tujuan = $validated['tujuan'];
         $tamu->pj = $validated['penanggung_jawab'];
+    $tamu->kontak = $request->input('kontak');
+    $tamu->jumlah_orang = $request->input('jumlah_orang') ? (int) $request->input('jumlah_orang') : 1;
 
         // stay_until: optional date input; default = today
         $stayUntilInput = $request->input('stay_until');
@@ -144,6 +148,11 @@ class Tamu extends Controller
      */
     public function destroy($id)
     {
+        // Only allow non-resepsionis to delete
+        if (auth()->check() && auth()->user()->isResepsionis()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menghapus data.');
+        }
+
         $t = TamuModel::find($id);
         if ($t) {
             $t->delete();
@@ -156,6 +165,11 @@ class Tamu extends Controller
      */
     public function bulkDestroy(Request $request)
     {
+        // Only allow non-resepsionis to bulk delete
+        if (auth()->check() && auth()->user()->isResepsionis()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk menghapus data.');
+        }
+
         $idsInput = $request->input('ids');
 
         // Normalize input: accept JSON string or array
@@ -185,6 +199,30 @@ class Tamu extends Controller
         $deleted = TamuModel::whereIn('id', $existing)->delete();
 
         return redirect()->back()->with('success', 'Berhasil menghapus ' . count($existing) . ' data');
+    }
+    
+    /**
+     * Update keterangan for a tamu (admin only)
+     */
+    public function updateKeterangan(Request $request, $id)
+    {
+        if (! auth()->check() || auth()->user()->isResepsionis()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk memberi keterangan.');
+        }
+
+        $t = TamuModel::find($id);
+        if (! $t) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        $data = $request->validate([
+            'keterangan' => ['nullable','string','max:2000'],
+        ]);
+
+        $t->keterangan = $data['keterangan'] ?? null;
+        $t->save();
+
+        return redirect()->back()->with('success', 'Keterangan berhasil disimpan');
     }
     
 }

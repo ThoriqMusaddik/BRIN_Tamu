@@ -18,7 +18,7 @@
 
         <nav class="nav">
           <a class="nav-item active"><i class="fa-solid fa-house"></i> <span>Dashboard</span></a>
-          <a class="nav-item"><i class="fa-regular fa-file-lines"></i> <span>Rekapan</span></a>
+          <a class="nav-item" id="rekapan-btn" href="#"><i class="fa-regular fa-file-lines"></i> <span>Rekapan</span></a>
         </nav>
 
         <div class="logout">
@@ -91,13 +91,8 @@
                 <th>Nama</th>
                 <th>Instansi</th>
                 <th>Tujuan</th>
-                <th>Hari</th>
                 <th>Tanggal</th>
-                <th>Sampai</th>
-                <th>Masuk</th>
-                <th>Keluar</th>
                 <th>Status</th>
-                <th>P. Jawab</th>
                 <th></th>
               </tr>
             </thead>
@@ -110,24 +105,39 @@
                 <td data-label="Nama">{{ $t->nama }}</td>
                 <td data-label="Instansi">{{ $t->asal_instansi }}</td>
                 <td data-label="Tujuan">{{ $t->tujuan }}</td>
-                <td data-label="Hari">{{ $t->hari }}</td>
                 <td data-label="Tanggal">{{ optional($t->created_at)->format('d/m/Y') }}</td>
-                <td data-label="Sampai">{{ $t->stay_until ? \Illuminate\Support\Carbon::parse($t->stay_until)->format('d/m/Y') : '-' }}</td>
-                <td data-label="Masuk">{{ $t->check_in ?? '-' }}</td>
-                <td data-label="Keluar">{{ $t->check_out ?? '-' }}</td>
                 <td data-label="Status">{{ $t->status ?? '-' }}</td>
-                <td data-label="P. Jawab">{{ $t->pj ?? '-' }}</td>
                 <td data-label="Aksi">
-                  <form class="delete-form" method="POST" action="{{ route('tamu.destroy', ['id' => $t->id]) }}" style="display:inline">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn-delete" title="Hapus" type="submit">🗑</button>
-                  </form>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <button class="btn-outline btn-detail" type="button"
+                      data-id="{{ $t->id }}"
+                      data-nama="{{ $t->nama }}"
+                      data-instansi="{{ $t->asal_instansi }}"
+                      data-tujuan="{{ $t->tujuan }}"
+                      data-hari="{{ $t->hari }}"
+                      data-tanggal="{{ optional($t->created_at)->format('d/m/Y H:i') }}"
+                      data-sampai="{{ $t->stay_until ? \Illuminate\Support\Carbon::parse($t->stay_until)->format('d/m/Y') : '-' }}"
+                      data-masuk="{{ $t->check_in ?? '-' }}"
+                      data-keluar="{{ $t->check_out ?? '-' }}"
+                      data-jumlah="{{ $t->jumlah_orang ?? 1 }}"
+                      data-kontak="{{ $t->kontak ?? '-' }}"
+                      data-keterangan="{{ $t->keterangan ? e($t->keterangan) : '' }}"
+                      data-pj="{{ $t->pj ?? '-' }}"
+                      data-status="{{ $t->status ?? '-' }}"
+                    >Rincian</button>
+                    @if(!(auth()->check() && auth()->user()->isResepsionis()))
+                      <form class="delete-form" method="POST" action="{{ route('tamu.destroy', ['id' => $t->id]) }}" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn-delete" title="Hapus" type="submit">🗑️</button>
+                      </form>
+                    @endif
+                  </div>
                 </td>
               </tr>
               @empty
               <tr class="empty-row">
-                <td colspan="13" style="text-align:center;">Belum ada data tamu.</td>
+                <td colspan="8" style="text-align:center;">Belum ada data tamu.</td>
               </tr>
               @endforelse
             </tbody>
@@ -164,12 +174,16 @@
               @endif
             </div>
             <div class="table-actions">
-              <button id="select-all-btn" class="btn-outline">Pilih semua</button>
-              <form id="bulk-delete-form" method="POST" action="{{ route('tamu.bulkDestroy') }}" style="display:inline">
-                @csrf
-                <input type="hidden" name="ids" id="bulk-ids" />
-                <button id="bulk-delete-btn" class="btn-danger" type="button">Hapus</button>
-              </form>
+                @if(auth()->check() && auth()->user()->isResepsionis())
+                  <span style="color:#777">Anda sebagai resepsionis hanya dapat melihat data dan merekap.</span>
+                @else
+                  <button id="select-all-btn" class="btn-outline">Pilih semua</button>
+                  <form id="bulk-delete-form" method="POST" action="{{ route('tamu.bulkDestroy') }}" style="display:inline">
+                    @csrf
+                    <input type="hidden" name="ids" id="bulk-ids" />
+                    <button id="bulk-delete-btn" class="btn-danger" type="button">Hapus</button>
+                  </form>
+                @endif
             </div>
           </div>
         </section>
@@ -190,6 +204,36 @@
         <div class="modal-actions">
           <button id="confirm-logout" class="btn-yes">Iya</button>
           <button id="cancel-logout" class="btn-no">Tidak</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rekapan modal -->
+    <div id="rekapan-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rekapan-title">
+        <h3 id="rekapan-title">REKAPAN BULANAN</h3>
+        <div style="width:100%;max-width:360px;margin-top:8px;">
+          <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Bulan</label>
+          <select id="rekapan-bulan" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
+            <option value="">Pilih Bulan</option>
+            @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $idx => $nama)
+              <option value="{{ $idx+1 }}">{{ $nama }}</option>
+            @endforeach
+          </select>
+
+          <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Tahun</label>
+          <select id="rekapan-tahun" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
+            <option value="">Pilih Tahun</option>
+            @php $start = date('Y') - 5; $end = date('Y') + 1; $currentYear = date('Y'); @endphp
+            @for($y = $start; $y <= $end; $y++)
+              <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
+            @endfor
+          </select>
+
+              <div class="modal-actions" style="margin-top:8px;display:flex;gap:10px;justify-content:center">
+                <button id="download-excel" class="btn-yes">Download Excel</button>
+                <button id="download-pdf" class="btn-no">Download PDF</button>
+              </div>
         </div>
       </div>
     </div>
@@ -285,4 +329,125 @@
       });
     })();
   </script>
+  <script>
+    // Rekapan modal: open/close and download handlers
+    (function(){
+      var rekBtn = document.getElementById('rekapan-btn');
+      var rekModal = document.getElementById('rekapan-modal');
+      var rekExcel = document.getElementById('download-excel');
+      var rekPdf = document.getElementById('download-pdf');
+
+      function showRek(){ if(rekModal){ rekModal.setAttribute('aria-hidden','false'); rekModal.classList.add('open'); } }
+      function hideRek(){ if(rekModal){ rekModal.setAttribute('aria-hidden','true'); rekModal.classList.remove('open'); } }
+
+      if(rekBtn){ rekBtn.addEventListener('click', function(e){ e.preventDefault(); showRek(); }); }
+      if(rekModal){ rekModal.addEventListener('click', function(e){ if(e.target === rekModal) hideRek(); }); }
+
+      function collectParams(){
+        var bulan = document.getElementById('rekapan-bulan').value;
+        var tahun = document.getElementById('rekapan-tahun').value;
+        if(!bulan || !tahun){ alert('Pilih bulan dan tahun terlebih dahulu.'); return null; }
+        return { bulan: bulan, tahun: tahun };
+      }
+
+      var excelBase = '{{ route('rekapan.export.excel') }}';
+      var pdfBase = '{{ route('rekapan.export.pdf') }}';
+
+      if(rekExcel){ rekExcel.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = excelBase + '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); window.location = url; }); }
+      if(rekPdf){ rekPdf.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = pdfBase + '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); window.location = url; }); }
+    })();
+  </script>
+
+    <!-- Detail modal (reusable) -->
+    <div id="detail-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <h3 id="detail-title">Rincian Tamu</h3>
+        <div id="detail-body" style="width:100%;max-width:520px;text-align:left">
+          <div><strong>Nama:</strong> <span id="d-nama"></span></div>
+          <div><strong>Instansi:</strong> <span id="d-instansi"></span></div>
+          <div><strong>Tujuan:</strong> <span id="d-tujuan"></span></div>
+          <div><strong>Tanggal:</strong> <span id="d-tanggal"></span></div>
+          <div><strong>Masuk / Keluar:</strong> <span id="d-masuk"></span> / <span id="d-keluar"></span></div>
+          <div><strong>Jumlah:</strong> <span id="d-jumlah"></span></div>
+          <div><strong>Kontak:</strong> <span id="d-kontak"></span></div>
+          <div style="margin-top:8px"><strong>Keterangan:</strong></div>
+          @if(auth()->check() && ! auth()->user()->isResepsionis())
+            <form id="detail-keterangan-form" method="POST" style="margin-top:6px;display:flex;gap:8px;align-items:flex-start;">
+              @csrf
+              <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+              <input type="hidden" id="detail-id" name="id" />
+              <textarea id="detail-keterangan" name="keterangan" rows="3" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px"></textarea>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px">
+                <button id="detail-save" class="btn-yes">Simpan</button>
+                <button type="button" id="detail-close" class="btn-no">Tutup</button>
+              </div>
+            </form>
+          @else
+            <div id="detail-keterangan-view" style="white-space:pre-wrap;margin-top:6px;">-</div>
+            <div style="text-align:right;margin-top:8px"><button type="button" id="detail-close-view" class="btn-no">Tutup</button></div>
+          @endif
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        // Detail modal handling
+        var modal = document.getElementById('detail-modal');
+        var detailClose = document.getElementById('detail-close');
+        var detailCloseView = document.getElementById('detail-close-view');
+        var detailSave = document.getElementById('detail-save');
+
+        function openDetail(){ if(modal){ modal.setAttribute('aria-hidden','false'); modal.classList.add('open'); } }
+        function closeDetail(){ if(modal){ modal.setAttribute('aria-hidden','true'); modal.classList.remove('open'); } }
+
+        // Wire close buttons
+        if(detailClose) detailClose.addEventListener('click', function(e){ e.preventDefault(); closeDetail(); });
+        if(detailCloseView) detailCloseView.addEventListener('click', function(e){ e.preventDefault(); closeDetail(); });
+        if(modal) modal.addEventListener('click', function(e){ if(e.target === modal) closeDetail(); });
+
+        // Populate modal when clicking detail buttons
+        var detailBtns = Array.prototype.slice.call(document.querySelectorAll('.btn-detail'));
+        detailBtns.forEach(function(b){
+          b.addEventListener('click', function(e){
+            e.preventDefault();
+            var id = this.getAttribute('data-id');
+            document.getElementById('d-nama').textContent = this.getAttribute('data-nama');
+            document.getElementById('d-instansi').textContent = this.getAttribute('data-instansi');
+            document.getElementById('d-tujuan').textContent = this.getAttribute('data-tujuan');
+            document.getElementById('d-tanggal').textContent = this.getAttribute('data-tanggal');
+            document.getElementById('d-masuk').textContent = this.getAttribute('data-masuk');
+            document.getElementById('d-keluar').textContent = this.getAttribute('data-keluar');
+            document.getElementById('d-jumlah').textContent = this.getAttribute('data-jumlah');
+            document.getElementById('d-kontak').textContent = this.getAttribute('data-kontak');
+            var k = this.getAttribute('data-keterangan') || '';
+            var kView = document.getElementById('detail-keterangan-view');
+            var kInput = document.getElementById('detail-keterangan');
+            if(kView) kView.textContent = k || '-';
+            if(kInput) kInput.value = k || '';
+            var idField = document.getElementById('detail-id'); if(idField) idField.value = id;
+            openDetail();
+          });
+        });
+
+        // Submit keterangan via normal POST to route /tamu/{id}/keterangan using dynamic form
+        if(detailSave){
+          detailSave.addEventListener('click', function(e){
+            e.preventDefault();
+            var id = document.getElementById('detail-id').value;
+            var k = document.getElementById('detail-keterangan').value;
+            var token = document.querySelector('input[name="_token"]').value;
+
+            // create form and submit
+            var f = document.createElement('form');
+            f.method = 'POST';
+            f.action = '/tamu/' + id + '/keterangan';
+            var t = document.createElement('input'); t.type = 'hidden'; t.name = '_token'; t.value = token; f.appendChild(t);
+            var ki = document.createElement('input'); ki.type = 'hidden'; ki.name = 'keterangan'; ki.value = k; f.appendChild(ki);
+            document.body.appendChild(f);
+            f.submit();
+          });
+        }
+      })();
+    </script>
 </html>

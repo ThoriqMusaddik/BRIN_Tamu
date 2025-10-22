@@ -43,25 +43,25 @@ html,body{height:100%;margin:0;background:#e9e9e9}
 .card-value{font-size:36px;font-weight:800;color:#111}
 
 /* Visitor table: use a real table for desktop, stacked cards for mobile */
-.visitor-table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size:15px }
+.visitor-table { border-collapse: collapse; width: 100%; table-layout: auto; font-size:15px }
 .visitor-table thead { display: table-header-group; }
 .visitor-table tbody { display: table-row-group; }
 .visitor-table thead tr { display: table-row; }
 .visitor-table tbody tr { display: table-row; }
-.visitor-table th, .visitor-table td { padding: 14px 18px; border-bottom: 1px solid #eee; vertical-align: middle; }
+.visitor-table th, .visitor-table td { padding: 14px 18px; border-bottom: 1px solid #eee; vertical-align: middle; word-break: break-word; overflow-wrap: anywhere; }
 .visitor-table thead th { text-align: left; padding: 14px 18px; background: transparent; color:#333; font-weight:700 }
 /* column size hints to avoid cramped content */
 .visitor-table th:nth-child(1), .visitor-table td:nth-child(1) { width:44px; }
 .visitor-table th:nth-child(2), .visitor-table td:nth-child(2) { width:56px; }
-.visitor-table th:nth-child(3), .visitor-table td:nth-child(3) { min-width:180px; }
-.visitor-table th:nth-child(4), .visitor-table td:nth-child(4) { min-width:160px; }
-.visitor-table th:nth-child(5), .visitor-table td:nth-child(5) { min-width:130px; }
-.visitor-table th:nth-child(6), .visitor-table td:nth-child(6) { min-width:90px; }
-.visitor-table th:nth-child(7), .visitor-table td:nth-child(7) { min-width:110px; }
-.visitor-table th:nth-child(8), .visitor-table td:nth-child(8) { min-width:90px; }
-.visitor-table th:nth-child(9), .visitor-table td:nth-child(9) { min-width:90px; }
-.visitor-table th:nth-child(10), .visitor-table td:nth-child(10) { min-width:90px; }
-.visitor-table th:nth-child(11), .visitor-table td:nth-child(11) { min-width:140px; }
+.visitor-table th:nth-child(3), .visitor-table td:nth-child(3) { min-width:140px; }
+.visitor-table th:nth-child(4), .visitor-table td:nth-child(4) { min-width:120px; }
+.visitor-table th:nth-child(5), .visitor-table td:nth-child(5) { min-width:100px; }
+.visitor-table th:nth-child(6), .visitor-table td:nth-child(6) { min-width:70px; }
+.visitor-table th:nth-child(7), .visitor-table td:nth-child(7) { min-width:90px; }
+.visitor-table th:nth-child(8), .visitor-table td:nth-child(8) { min-width:80px; }
+.visitor-table th:nth-child(9), .visitor-table td:nth-child(9) { min-width:80px; }
+.visitor-table th:nth-child(10), .visitor-table td:nth-child(10) { min-width:80px; }
+.visitor-table th:nth-child(11), .visitor-table td:nth-child(11) { min-width:100px; }
 .visitor-table th:nth-child(12), .visitor-table td:nth-child(12) { width:72px; }
 .visitor-table tbody tr { height:56px }
 tr.checked-out { background: #e6ffea; }
@@ -165,3 +165,27 @@ tr.staying { background: #fff7e6; }
 .modal-actions{display:flex;gap:12px;justify-content:center}
 .btn-yes{background:var(--red-2);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
 .btn-no{background:#eee;color:#333;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+
+/* Rekapan modal tweaks (reuses modal styles) */
+#rekapan-modal .modal{max-width:420px;padding:18px}
+#rekapan-modal select{font-size:15px}
+#rekapan-modal .btn-yes{background:#2e7d32} /* Excel: green */
+#rekapan-modal .btn-no{background:#b92b2b;color:#fff} /* PDF: red */
+
+/* Extra table niceties: constrain input/textarea sizes and ensure cells wrap */
+.visitor-table td input[type="text"], .visitor-table td textarea { box-sizing: border-box; max-width:100%; }
+.keterangan-input { width:220px; max-width:100%; padding:6px;border-radius:6px;border:1px solid #ddd }
+
+@media (max-width:1200px) {
+	.keterangan-input { width:160px; }
+}
+
+@media (max-width:900px) {
+	.keterangan-input { width:100%; }
+}
+
+/* reduce some cell min-widths for very narrow layouts */
+@media (max-width:1100px) {
+	.visitor-table th:nth-child(3), .visitor-table td:nth-child(3) { min-width:120px; }
+	.visitor-table th:nth-child(4), .visitor-table td:nth-child(4) { min-width:90px; }
+}

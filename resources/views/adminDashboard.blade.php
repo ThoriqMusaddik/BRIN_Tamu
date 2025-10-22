@@ -224,16 +224,16 @@
           <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Tahun</label>
           <select id="rekapan-tahun" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
             <option value="">Pilih Tahun</option>
-            @php $start = date('Y') - 5; $end = date('Y') + 1; @endphp
+            @php $start = date('Y') - 5; $end = date('Y') + 1; $currentYear = date('Y'); @endphp
             @for($y = $start; $y <= $end; $y++)
-              <option value="{{ $y }}">{{ $y }}</option>
+              <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
             @endfor
           </select>
 
-          <div class="modal-actions" style="margin-top:8px;display:flex;gap:10px;justify-content:center">
-            <button id="download-excel" class="btn-yes">Download Excel</button>
-            <button id="download-pdf" class="btn-no">Download PDF</button>
-          </div>
+              <div class="modal-actions" style="margin-top:8px;display:flex;gap:10px;justify-content:center">
+                <button id="download-excel" class="btn-yes">Download Excel</button>
+                <button id="download-pdf" class="btn-no">Download PDF</button>
+              </div>
         </div>
       </div>
     </div>
@@ -350,8 +350,11 @@
         return { bulan: bulan, tahun: tahun };
       }
 
-      if(rekExcel){ rekExcel.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = '/rekapan/export/excel?bulan='+p.bulan+'&tahun='+p.tahun; window.location = url; }); }
-      if(rekPdf){ rekPdf.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = '/rekapan/export/pdf?bulan='+p.bulan+'&tahun='+p.tahun; window.location = url; }); }
+      var excelBase = '{{ route('rekapan.export.excel') }}';
+      var pdfBase = '{{ route('rekapan.export.pdf') }}';
+
+      if(rekExcel){ rekExcel.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = excelBase + '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); window.location = url; }); }
+      if(rekPdf){ rekPdf.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = pdfBase + '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); window.location = url; }); }
     })();
   </script>
 

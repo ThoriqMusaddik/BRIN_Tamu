@@ -29,3 +29,7 @@ Route::post('/tamu/bulk-delete', [TamuController::class, 'bulkDestroy'])->middle
 
 // update keterangan (admin only)
 Route::post('/tamu/{id}/keterangan', [TamuController::class, 'updateKeterangan'])->middleware('auth')->name('tamu.updateKeterangan');
+
+// Rekapan exports (protected)
+Route::get('/rekapan/export/excel', [\App\Http\Controllers\RekapanController::class, 'exportExcel'])->middleware('auth')->name('rekapan.export.excel');
+Route::get('/rekapan/export/pdf', [\App\Http\Controllers\RekapanController::class, 'exportPdf'])->middleware('auth')->name('rekapan.export.pdf');

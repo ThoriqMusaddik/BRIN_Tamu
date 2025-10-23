@@ -37,16 +37,16 @@
                             <input type="text" name="instansi" placeholder="Instansi" required>
                             <select name="tujuan" id="tujuan" required>
                                 <option value="">Pilih Tujuan</option>
-                                <option value="Layanan-data">Layanan Data Citra</option>
-                                <option value="Layanan-data">Kunjungan Edukasi</option>
-                                <option value="Layanan-data">Sosialisasi Produk</option>
-                                <option value="Layanan-data">Internal BRIN</option>
-                                <option value="Magang-PKL-BimbinganSkripsi">Magang/PKL/Bimbingan Skripsi</option>
+                                <option value="Layanan data">Layanan Data Citra</option>
+                                <option value="Kunjungan Edukasi">Kunjungan Edukasi</option>
+                                <option value="Sosialisasi Produk">Sosialisasi Produk</option>
+                                <option value="Internal BRIN">Internal BRIN</option>
+                                <option value="Magang/PKL/BimbinganSkripsi">Magang/PKL/Bimbingan Skripsi</option>
                                 <option value="Maintenance">Maintenance</option>
                             </select>
                             <select name="penanggung_jawab" id="penanggung_jawab" required>
                                 <option value="">Pilih Penanggung jawab</option>
-                                <option value="Tuti Asriani">Riski Wahyuningrum</option>
+                                <option value="Riski Wahyuningrum">Riski Wahyuningrum</option>
                                 <option value="Hasniaty">Hasniaty</option>
                                 <option value="Taufik Syam">Taufik Syam</option>
                                 <option value="Andi Adyatma">Andi Adyatma</option>

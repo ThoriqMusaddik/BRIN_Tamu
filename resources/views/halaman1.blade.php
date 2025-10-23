@@ -18,10 +18,10 @@
 
             <section class="cards-area">
                 <div class="cards-grid">
-                    <div class="card card-tl" style="background-image: url('{{ asset('gambar/bg1.jpg') }}');" aria-hidden="true"></div>
+                    <!-- <div class="card card-tl" style="background-image: url('{{ asset('gambar/bg1.jpg') }}');" aria-hidden="true"></div> -->
                     <div class="card card-tr" style="background-image: url('{{ asset('gambar/bg2.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-bl" style="background-image: url('{{ asset('gambar/bg3.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div>
+                    <!-- <div class="card card-bl" style="background-image: url('{{ asset('gambar/bg3.jpg') }}');" aria-hidden="true"></div>
+                    <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div> -->
                 </div>
 
                 <div class="overlay-form">
@@ -61,7 +61,7 @@
                             <input type="date" name="stay_until" id="stay_until" value="{{ date('Y-m-d') }}" style="padding:8px;border-radius:6px;border:1px solid #ccc;margin-top:6px;" />
 
                             <div class="btn-wrap">
-                                <button type="submit">LOGIN</button>
+                                <button type="submit">Check In</button>
                                 <button type="button" id="checkout-button">Check out</button>
                             </div>
                         </form>

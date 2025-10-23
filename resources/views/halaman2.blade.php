@@ -15,15 +15,6 @@
                     <div class="title">KSL STASIUN BUMI PAREPARE</div>
                 </div>
             </header>
-
-            <section class="cards-area">
-                <div class="cards-grid">
-                    <div class="card card-tl" style="background-image: url('{{ asset('gambar/bg1.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-tr" style="background-image: url('{{ asset('gambar/bg2.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-bl" style="background-image: url('{{ asset('gambar/bg3.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div>
-                </div>
-
                 <div class="overlay-form" id="thankyou-overlay" aria-hidden="true" @if(session('success')) class="open" @endif>
                     <div class="overlay-inner">
                         <h1>TERIMA KASIH</h1>
@@ -59,8 +50,12 @@
             function closeOverlay(){ if(overlay){ overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); } }
 
             // If server opened the overlay (session success), auto-close after 3s
-            if(overlay && overlay.classList.contains('open')){
-                setTimeout(closeOverlay, 3000);
+            if (overlay && overlay.classList.contains('open')) {
+                console.log("Redirect ke: {{ route('halaman1') }}"); // debug
+                setTimeout(closeOverlay, 3000); // tutup overlay
+                setTimeout(function() {
+                    window.location.href = "{{ route('halaman1') }}"; // pindah halaman
+                }, 4000);
             }
 
             if(closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); closeOverlay(); });

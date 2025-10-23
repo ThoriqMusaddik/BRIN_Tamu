@@ -33,3 +33,5 @@ Route::post('/tamu/{id}/keterangan', [TamuController::class, 'updateKeterangan']
 // Rekapan exports (protected)
 Route::get('/rekapan/export/excel', [\App\Http\Controllers\RekapanController::class, 'exportExcel'])->middleware('auth')->name('rekapan.export.excel');
 Route::get('/rekapan/export/pdf', [\App\Http\Controllers\RekapanController::class, 'exportPdf'])->middleware('auth')->name('rekapan.export.pdf');
+
+Route::get('/halaman1', [YourController::class, 'halaman1'])->name('halaman1');

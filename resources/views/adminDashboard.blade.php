@@ -115,12 +115,8 @@
                       data-instansi="{{ $t->asal_instansi }}"
                       data-tujuan="{{ $t->tujuan }}"
                       data-hari="{{ $t->hari }}"
-                      data-tanggal="
-                      @if($t->check_out)
-                          {{ optional($t->created_at)->format('d/m/Y') }} → {{ \Carbon\Carbon::parse($t->check_out)->format('d/m/Y') }}
-                      @else
-                          {{ optional($t->created_at)->format('d/m/Y') }}
-                      @endif
+                      data-tanggal-masuk="{{ $t->check_in ? \Carbon\Carbon::parse($t->check_in)->format('d/m/Y H:i') : '-' }}"
+                      data-tanggal-keluar="{{ $t->check_out ? \Carbon\Carbon::parse($t->check_out)->format('d/m/Y H:i') : '-' }}"
 "
                       data-sampai="{{ $t->stay_until ? \Illuminate\Support\Carbon::parse($t->stay_until)->format('d/m/Y') : '-' }}"
                       data-masuk="{{ $t->check_in ?? '-' }}"
@@ -372,8 +368,9 @@
           <div><strong>Nama:</strong> <span id="d-nama"></span></div>
           <div><strong>Instansi:</strong> <span id="d-instansi"></span></div>
           <div><strong>Tujuan:</strong> <span id="d-tujuan"></span></div>
-          <div><strong>Tanggal:</strong> <span id="d-tanggal"></span></div>
-          <div><strong>Masuk / Keluar:</strong> <span id="d-masuk"></span> / <span id="d-keluar"></span></div>
+          <div><strong>Tanggal Masuk:</strong> <span id="d-tanggal-masuk"></span></div>
+          <div><strong>Tanggal Keluar:</strong> <span id="d-tanggal-keluar"></span></div>
+        
           <div><strong>Jumlah:</strong> <span id="d-jumlah"></span></div>
           <div><strong>Kontak:</strong> <span id="d-kontak"></span></div>
           <div style="margin-top:8px"><strong>Keterangan:</strong></div>
@@ -421,9 +418,8 @@
             document.getElementById('d-nama').textContent = this.getAttribute('data-nama');
             document.getElementById('d-instansi').textContent = this.getAttribute('data-instansi');
             document.getElementById('d-tujuan').textContent = this.getAttribute('data-tujuan');
-            document.getElementById('d-tanggal').textContent = this.getAttribute('data-tanggal');
-            document.getElementById('d-masuk').textContent = this.getAttribute('data-masuk');
-            document.getElementById('d-keluar').textContent = this.getAttribute('data-keluar');
+            document.getElementById('d-tanggal-masuk').textContent = this.getAttribute('data-tanggal-masuk');
+            document.getElementById('d-tanggal-keluar').textContent = this.getAttribute('data-tanggal-keluar');
             document.getElementById('d-jumlah').textContent = this.getAttribute('data-jumlah');
             document.getElementById('d-kontak').textContent = this.getAttribute('data-kontak');
             var k = this.getAttribute('data-keterangan') || '';

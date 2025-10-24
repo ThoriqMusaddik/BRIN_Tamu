@@ -71,18 +71,18 @@
             <!-- Footer: two items inline -->
             <footer class="site-footer">
                 <div class="site-footer-item">
-                    <img src="{{ asset('gambar/logo ig.png') }}" alt="IG" onerror="this.style.display='none'" />
+                    <img src="{{ asset('gambar/Logo ITH.png') }}" alt="IG" onerror="this.style.display='none'" />
                     <div class="meta">
-                        <div>call.me.riq</div>
-                        <div class="email">Email : Thoariqmusaddik@gmail.com</div>
+                        <div>INSTITUT TEKNOLOGI BACHARUDDIN JUSUF HABIBIE</div>
+                        <div class="email">Thoariq Musaddik |  M. Fauzan Iskandar
                     </div>
                 </div>
-                <div class="site-footer-item">
+                <!-- <div class="site-footer-item">
                     <img src="{{ asset('gambar/logo ig.png') }}" alt="IG" onerror="this.style.display='none'" />
                     <div class="meta">
                         <div>Fau4732</div>
                         <div class="email">Email : muhammadfauzaniskandar241@gmail.com</div>
-                    </div>
+                    </div> -->
                 </div>
             </footer>
         </div>

@@ -115,7 +115,13 @@
                       data-instansi="{{ $t->asal_instansi }}"
                       data-tujuan="{{ $t->tujuan }}"
                       data-hari="{{ $t->hari }}"
-                      data-tanggal="{{ optional($t->created_at)->format('d/m/Y H:i') }}"
+                      data-tanggal="
+                      @if($t->check_out)
+                          {{ optional($t->created_at)->format('d/m/Y') }} → {{ \Carbon\Carbon::parse($t->check_out)->format('d/m/Y') }}
+                      @else
+                          {{ optional($t->created_at)->format('d/m/Y') }}
+                      @endif
+"
                       data-sampai="{{ $t->stay_until ? \Illuminate\Support\Carbon::parse($t->stay_until)->format('d/m/Y') : '-' }}"
                       data-masuk="{{ $t->check_in ?? '-' }}"
                       data-keluar="{{ $t->check_out ?? '-' }}"
@@ -376,7 +382,7 @@
               @csrf
               <input type="hidden" name="_token" value="{{ csrf_token() }}" />
               <input type="hidden" id="detail-id" name="id" />
-              <textarea id="detail-keterangan" name="keterangan" rows="3" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px"></textarea>
+              <textarea id="detail-keterangan" name="keterangan" rows="3" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;resize:none;"></textarea>
               <div style="display:flex;flex-direction:column;gap:6px;margin-left:8px">
                 <button id="detail-save" class="btn-yes">Simpan</button>
                 <button type="button" id="detail-close" class="btn-no">Tutup</button>

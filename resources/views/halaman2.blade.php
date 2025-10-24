@@ -50,12 +50,8 @@
             function closeOverlay(){ if(overlay){ overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); } }
 
             // If server opened the overlay (session success), auto-close after 3s
-            if (overlay && overlay.classList.contains('open')) {
-                console.log("Redirect ke: {{ route('halaman1') }}"); // debug
-                setTimeout(closeOverlay, 3000); // tutup overlay
-                setTimeout(function() {
-                    window.location.href = "{{ route('halaman1') }}"; // pindah halaman
-                }, 4000);
+            if(overlay && overlay.classList.contains('open')){
+                setTimeout(closeOverlay, 3000);
             }
 
             if(closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); closeOverlay(); });

@@ -18,6 +18,9 @@
       .keterangan { max-width:300px; white-space:normal; }
       /* Smaller type for metadata */
       h2 { font-size:14px; margin:6px 0 10px 0; }
+      .summary { margin-bottom: 20px; }
+      .summary table { width: auto; min-width: 300px; margin-bottom: 15px; }
+      .summary th { text-align: left; }
     </style>
   </head>
   <body>
@@ -25,6 +28,39 @@
     @if(isset($warning))
       <p style="color:darkred">{{ $warning }}</p>
     @endif
+
+    <div class="summary">
+      <?php
+        // Calculate summary statistics
+        $total = count($rows);
+        $uniqueInstansi = count(array_unique($rows->pluck('asal_instansi')->filter()->toArray()));
+        $totalVisitors = $rows->sum('jumlah_orang');
+        $activeVisitors = $rows->where('status', 'IN')->count();
+        $completedVisits = $rows->whereIn('status', ['OUT', 'AUTO_OUT'])->count();
+      ?>
+      <table>
+        <tr>
+          <th>Total Kunjungan:</th>
+          <td>{{ $total }}</td>
+        </tr>
+        <tr>
+          <th>Jumlah Instansi (Unik):</th>
+          <td>{{ $uniqueInstansi }}</td>
+        </tr>
+        <tr>
+          <th>Total Pengunjung:</th>
+          <td>{{ $totalVisitors }}</td>
+        </tr>
+        <tr>
+          <th>Kunjungan Aktif:</th>
+          <td>{{ $activeVisitors }}</td>
+        </tr>
+        <tr>
+          <th>Kunjungan Selesai:</th>
+          <td>{{ $completedVisits }}</td>
+        </tr>
+      </table>
+    </div>
     <table>
       <thead>
         <tr>
@@ -39,7 +75,6 @@
           <th>Check Out</th>
           <th>Status</th>
           <th>Keterangan</th>
-          <th>Tanggal</th>
         </tr>
       </thead>
       <tbody>
@@ -52,14 +87,18 @@
             <td>{{ $r->pj }}</td>
             <td>{{ $r->kontak }}</td>
             <td class="nowrap">{{ $r->jumlah_orang }}</td>
-            <td class="nowrap">{{ $r->check_in }}</td>
-            <td class="nowrap">{{ $r->check_out }}</td>
+            <?php
+              $tz = 'Asia/Makassar';
+              $created = $r->created_at ? \Carbon\Carbon::parse($r->created_at)->setTimezone($tz) : null;
+              $checkOut = $r->check_out ? \Carbon\Carbon::parse($r->check_out)->setTimezone($tz)->format('d/m/Y H:i') : '-';
+            ?>
+            <td class="nowrap">{{ $created ? $created->format('d/m/Y H:i') : '-' }}</td>
+            <td class="nowrap">{{ $checkOut }}</td>
             <td class="nowrap">{{ $r->status }}</td>
             <td>{{ $r->keterangan }}</td>
-            <td class="nowrap">{{ optional($r->created_at)->format('Y-m-d H:i') }}</td>
           </tr>
         @empty
-          <tr><td colspan="12">Tidak ada data.</td></tr>
+          <tr><td colspan="11">Tidak ada data.</td></tr>
         @endforelse
       </tbody>
     </table>

@@ -59,9 +59,7 @@ class RekapanController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $columns = ['ID','Nama','Instansi','Tujuan','PJ','Kontak','Jumlah Orang','Check In','Check Out','Status','Keterangan','Tanggal'];
-
-        $callback = function() use ($rows, $columns, $summary) {
+        $columns = ['ID','Nama','Instansi','Tujuan','PJ','Kontak','Jumlah Orang','Check In','Check Out','Status','Keterangan'];        $callback = function() use ($rows, $columns, $summary) {
             $out = fopen('php://output', 'w');
             // BOM for Excel to detect UTF-8
             fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
@@ -71,7 +69,13 @@ class RekapanController extends Controller
             }
             fputcsv($out, []);
             fputcsv($out, $columns);
+            $tz = 'Asia/Makassar';
             foreach ($rows as $r) {
+                $created = $r->created_at ? Carbon::parse($r->created_at)->setTimezone($tz) : null;
+                $checkIn = $created ? $created->format('d/m/Y H:i') : ($r->check_in ?? '-');
+
+                $checkOut = $r->check_out ? Carbon::parse($r->check_out)->setTimezone($tz)->format('d/m/Y H:i') : '-';
+
                 fputcsv($out, [
                     $r->id,
                     $r->nama,
@@ -80,11 +84,10 @@ class RekapanController extends Controller
                     $r->pj,
                     $r->kontak,
                     $r->jumlah_orang,
-                    $r->check_in,
-                    $r->check_out,
+                    $checkIn,
+                    $checkOut,
                     $r->status,
-                    $r->keterangan,
-                    optional($r->created_at)->format('Y-m-d H:i:s'),
+                                        $r->keterangan,
                 ]);
             }
             fclose($out);

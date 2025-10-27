@@ -50,7 +50,7 @@ class Tamu extends Controller
             }
 
             $now = Carbon::now($tz);
-            $tamu->check_out = $now->format('H:i');
+            $tamu->check_out = $now;
             $tamu->status = 'OUT';
             $tamu->save();
 
@@ -131,7 +131,8 @@ class Tamu extends Controller
 
         foreach ($toAuto as $t) {
             // Only update if still IN
-            $t->check_out = '23:59';
+            // Set check_out to end of the day for auto-checkouts
+            $t->check_out = $today->copy()->endOfDay();
             $t->status = 'AUTO_OUT';
             $t->save();
         }

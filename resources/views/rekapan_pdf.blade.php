@@ -73,7 +73,6 @@
           <th>Jumlah</th>
           <th>Check In</th>
           <th>Check Out</th>
-          <th>Status</th>
           <th>Keterangan</th>
         </tr>
       </thead>
@@ -94,7 +93,6 @@
             ?>
             <td class="nowrap">{{ $created ? $created->format('d/m/Y H:i') : '-' }}</td>
             <td class="nowrap">{{ $checkOut }}</td>
-            <td class="nowrap">{{ $r->status }}</td>
             <td>{{ $r->keterangan }}</td>
           </tr>
         @empty

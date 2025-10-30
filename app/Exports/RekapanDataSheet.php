@@ -36,7 +36,6 @@ class RekapanDataSheet implements FromArray, WithHeadings, WithTitle
                 $r->jumlah_orang,
                 $checkIn,
                 $checkOut,
-                $r->status,
                 $r->keterangan,
             ];
         }
@@ -45,7 +44,7 @@ class RekapanDataSheet implements FromArray, WithHeadings, WithTitle
 
     public function headings(): array
     {
-        return ['ID','Nama','Instansi','Tujuan','PJ','Kontak','Jumlah Orang','Check In','Check Out','Status','Keterangan'];
+        return ['ID','Nama','Instansi','Tujuan','PJ','Kontak','Jumlah Orang','Check In','Check Out','Keterangan'];
     }
 
     public function title(): string

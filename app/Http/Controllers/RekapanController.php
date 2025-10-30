@@ -59,7 +59,8 @@ class RekapanController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $columns = ['ID','Nama','Instansi','Tujuan','PJ','Kontak','Jumlah Orang','Check In','Check Out','Status','Keterangan'];        $callback = function() use ($rows, $columns, $summary) {
+        $columns = ['ID','Nama','Instansi','Tujuan','PJ','Kontak','Jumlah Orang','Check In','Check Out','Keterangan'];        
+        $callback = function() use ($rows, $columns, $summary) {
             $out = fopen('php://output', 'w');
             // BOM for Excel to detect UTF-8
             fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
@@ -86,8 +87,7 @@ class RekapanController extends Controller
                     $r->jumlah_orang,
                     $checkIn,
                     $checkOut,
-                    $r->status,
-                                        $r->keterangan,
+                    $r->keterangan,
                 ]);
             }
             fclose($out);

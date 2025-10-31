@@ -214,28 +214,46 @@
     <div id="rekapan-modal" class="modal-overlay" aria-hidden="true">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rekapan-title">
         <h3 id="rekapan-title">REKAPAN BULANAN</h3>
-        <div style="width:100%;max-width:360px;margin-top:8px;">
-          <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Bulan</label>
-          <select id="rekapan-bulan" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
+        <div class="form-group">
+          <label for="rekapan-bulan">Bulan</label>
+          <select id="rekapan-bulan">
             <option value="">Pilih Bulan</option>
             @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $idx => $nama)
               <option value="{{ $idx+1 }}">{{ $nama }}</option>
             @endforeach
           </select>
+        </div>
 
-          <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px">Tahun</label>
-          <select id="rekapan-tahun" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px">
+        <div class="form-group">
+          <label for="rekapan-tahun">Tahun</label>
+          <select id="rekapan-tahun">
             <option value="">Pilih Tahun</option>
             @php $start = date('Y') - 5; $end = date('Y') + 1; $currentYear = date('Y'); @endphp
             @for($y = $start; $y <= $end; $y++)
               <option value="{{ $y }}" {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
             @endfor
           </select>
+        </div>
 
-              <div class="modal-actions" style="margin-top:8px;display:flex;gap:10px;justify-content:center">
-                <button id="download-excel" class="btn-yes">Download Excel</button>
-                <button id="download-pdf" class="btn-no">Download PDF</button>
-              </div>
+        <div class="date-range">
+          <label for="rekapan-start">Atau pilih rentang tanggal</label>
+          <div class="date-range-inputs">
+            <input id="rekapan-start" type="date" placeholder="Tanggal Mulai" />
+            <input id="rekapan-end" type="date" placeholder="Tanggal Akhir" />
+          </div>
+          <div class="hint-text">
+            Kosongkan kedua tanggal untuk menggunakan pilihan Bulan/Tahun di atas. 
+            Isi kedua tanggal untuk ekspor berdasarkan rentang tanggal.
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="download-excel" class="btn-yes">
+            <i class="fa-solid fa-file-excel"></i> Download Excel
+          </button>
+          <button id="download-pdf" class="btn-no">
+            <i class="fa-solid fa-file-pdf"></i> Download PDF
+          </button>
         </div>
       </div>
     </div>
@@ -348,15 +366,27 @@
       function collectParams(){
         var bulan = document.getElementById('rekapan-bulan').value;
         var tahun = document.getElementById('rekapan-tahun').value;
-        if(!bulan || !tahun){ alert('Pilih bulan dan tahun terlebih dahulu.'); return null; }
+        var start = document.getElementById('rekapan-start').value;
+        var end = document.getElementById('rekapan-end').value;
+
+        // If both start and end provided, use range (format YYYY-MM-DD from input[type=date])
+        if (start || end) {
+          if (!start || !end) { alert('Isi kedua tanggal mulai dan akhir untuk ekspor rentang.'); return null; }
+          // basic validation: start <= end
+          if (new Date(start) > new Date(end)) { alert('Tanggal mulai harus sebelum atau sama dengan tanggal akhir.'); return null; }
+          return { start_date: start, end_date: end };
+        }
+
+        // fallback to bulan/tahun
+        if(!bulan || !tahun){ alert('Pilih bulan dan tahun terlebih dahulu, atau isi rentang tanggal.'); return null; }
         return { bulan: bulan, tahun: tahun };
       }
 
       var excelBase = '{{ route('rekapan.export.excel') }}';
       var pdfBase = '{{ route('rekapan.export.pdf') }}';
 
-      if(rekExcel){ rekExcel.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = excelBase + '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); window.location = url; }); }
-      if(rekPdf){ rekPdf.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = pdfBase + '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); window.location = url; }); }
+  if(rekExcel){ rekExcel.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = excelBase; if(p.start_date && p.end_date){ url += '?start_date=' + encodeURIComponent(p.start_date) + '&end_date=' + encodeURIComponent(p.end_date); } else { url += '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); } window.location = url; }); }
+  if(rekPdf){ rekPdf.addEventListener('click', function(e){ e.preventDefault(); var p = collectParams(); if(!p) return; var url = pdfBase; if(p.start_date && p.end_date){ url += '?start_date=' + encodeURIComponent(p.start_date) + '&end_date=' + encodeURIComponent(p.end_date); } else { url += '?bulan=' + encodeURIComponent(p.bulan) + '&tahun=' + encodeURIComponent(p.tahun); } window.location = url; }); }
     })();
   </script>
 

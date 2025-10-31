@@ -167,10 +167,91 @@ tr.staying { background: #fff7e6; }
 .btn-no{background:#eee;color:#333;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
 
 /* Rekapan modal tweaks (reuses modal styles) */
-#rekapan-modal .modal{max-width:420px;padding:18px}
-#rekapan-modal select{font-size:15px}
-#rekapan-modal .btn-yes{background:#2e7d32} /* Excel: green */
-#rekapan-modal .btn-no{background:#b92b2b;color:#fff} /* PDF: red */
+#rekapan-modal .modal {
+    max-width: 460px;
+    height: auto;
+    padding: 24px;
+}
+#rekapan-modal .modal h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+#rekapan-modal .form-group {
+    width: 100%;
+    margin-bottom: 16px;
+}
+#rekapan-modal .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+#rekapan-modal select, 
+#rekapan-modal input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    margin-bottom: 12px;
+    background: #fff;
+}
+#rekapan-modal select:focus,
+#rekapan-modal input[type="date"]:focus {
+    outline: none;
+    border-color: var(--red-2);
+    box-shadow: 0 0 0 2px rgba(181, 27, 27, 0.1);
+}
+#rekapan-modal .date-range {
+    padding: 16px 0;
+    margin: 16px 0;
+    border-top: 1px dashed #ddd;
+    border-bottom: 1px dashed #ddd;
+}
+#rekapan-modal .date-range-inputs {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+#rekapan-modal .hint-text {
+    font-size: 13px;
+    color: #666;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+#rekapan-modal .modal-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+#rekapan-modal .btn-yes {
+    background: #2e7d32;
+    min-width: 140px;
+    font-weight: 600;
+    padding: 12px 20px;
+} 
+#rekapan-modal .btn-no {
+    background: #b92b2b;
+    color: #fff;
+    min-width: 140px;
+    font-weight: 600;
+    padding: 12px 20px;
+}
+#rekapan-modal .btn-yes:hover,
+#rekapan-modal .btn-no:hover {
+    opacity: 0.9;
+}
+@media (max-width: 500px) {
+    #rekapan-modal .modal {
+        width: 90%;
+        margin: 0 16px;
+    }
+    #rekapan-modal .date-range-inputs {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
 
 /* Extra table niceties: constrain input/textarea sizes and ensure cells wrap */
 .visitor-table td input[type="text"], .visitor-table td textarea { box-sizing: border-box; max-width:100%; }
@@ -189,3 +270,4 @@ tr.staying { background: #fff7e6; }
 	.visitor-table th:nth-child(3), .visitor-table td:nth-child(3) { min-width:120px; }
 	.visitor-table th:nth-child(4), .visitor-table td:nth-child(4) { min-width:90px; }
 }
+

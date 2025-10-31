@@ -23,4 +23,14 @@ class Tamu extends Model
         'kontak',
         'keterangan',
     ];
+
+    /**
+     * Casts for date/datetime fields
+     */
+    protected $casts = [
+        'check_out' => 'datetime',
+        'stay_until' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 }

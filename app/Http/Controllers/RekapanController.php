@@ -11,19 +11,41 @@ class RekapanController extends Controller
     // Export rekapan as CSV (Excel-friendly)
     public function exportExcel(Request $request)
     {
-        $bulan = (int) $request->query('bulan');
-        $tahun = (int) $request->query('tahun');
-        if (! $bulan || ! $tahun) {
-            return redirect()->back()->with('error', 'Pilih bulan dan tahun.');
-        }
+        // Support either month/year selection OR explicit start_date & end_date (YYYY-MM-DD)
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        // Build range for month
-        try {
-            $start = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Tanggal tidak valid');
+        if ($startDate || $endDate) {
+            // both required
+            if (! $startDate || ! $endDate) {
+                return redirect()->back()->with('error', 'Pilih tanggal mulai dan akhir untuk rentang ekspor.');
+            }
+            try {
+                $start = Carbon::parse($startDate)->startOfDay();
+                $end = Carbon::parse($endDate)->endOfDay();
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Format tanggal tidak valid. Gunakan YYYY-MM-DD.');
+            }
+            if ($start->gt($end)) {
+                return redirect()->back()->with('error', 'Tanggal mulai harus sebelum atau sama dengan tanggal akhir.');
+            }
+            $label = $start->format('d/m/Y') . ' - ' . $end->format('d/m/Y');
+        } else {
+            $bulan = (int) $request->query('bulan');
+            $tahun = (int) $request->query('tahun');
+            if (! $bulan || ! $tahun) {
+                return redirect()->back()->with('error', 'Pilih bulan dan tahun atau rentang tanggal.');
+            }
+
+            // Build range for month
+            try {
+                $start = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Tanggal tidak valid');
+            }
+            $end = $start->copy()->endOfMonth();
+            $label = $start->isoFormat('MMMM YYYY');
         }
-        $end = $start->copy()->endOfMonth();
 
         $rows = TamuModel::whereBetween('created_at', [$start, $end])->orderBy('created_at','asc')->get();
 
@@ -37,7 +59,7 @@ class RekapanController extends Controller
         $totalJumlahOrang = $rows->pluck('jumlah_orang')->map(function($v){ return (int)$v; })->sum();
 
         $summary = [
-            'Bulan' => $start->isoFormat('MMMM YYYY'),
+            'Periode' => $label,
             'Jumlah Instansi (unik)' => $distinctInstansi,
             'Total Jumlah Orang' => $totalJumlahOrang,
             'Total Rekap' => $rows->count(),
@@ -46,14 +68,23 @@ class RekapanController extends Controller
         // If maatwebsite/excel installed, use it to generate .xlsx
         if (class_exists('Maatwebsite\\Excel\\Facades\\Excel') && class_exists('App\\Exports\\RekapanExport')) {
             $exportClass = 'App\\Exports\\RekapanExport';
-            $filename = sprintf('rekapan_%04d-%02d.xlsx', $tahun, $bulan);
+            // Build filename from range or month
+            if (isset($bulan) && isset($tahun)) {
+                $filename = sprintf('rekapan_%04d-%02d.xlsx', $tahun, $bulan);
+            } else {
+                $filename = 'rekapan_' . $start->format('Ymd') . '_' . $end->format('Ymd') . '.xlsx';
+            }
             // call the Excel facade download method dynamically
             $facade = 'Maatwebsite\\Excel\\Facades\\Excel';
             return forward_static_call_array([$facade, 'download'], [new $exportClass($rows, $summary), $filename]);
         }
 
         // Fallback: CSV stream
-        $filename = sprintf('rekapan_%04d-%02d.csv', $tahun, $bulan);
+        if (isset($bulan) && isset($tahun)) {
+            $filename = sprintf('rekapan_%04d-%02d.csv', $tahun, $bulan);
+        } else {
+            $filename = 'rekapan_' . $start->format('Ymd') . '_' . $end->format('Ymd') . '.csv';
+        }
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
@@ -99,18 +130,38 @@ class RekapanController extends Controller
     // Export rekapan as PDF (uses dompdf if available)
     public function exportPdf(Request $request)
     {
-        $bulan = (int) $request->query('bulan');
-        $tahun = (int) $request->query('tahun');
-        if (! $bulan || ! $tahun) {
-            return redirect()->back()->with('error', 'Pilih bulan dan tahun.');
-        }
+        // Support month/year or explicit start_date & end_date
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        try {
-            $start = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Tanggal tidak valid');
+        if ($startDate || $endDate) {
+            if (! $startDate || ! $endDate) {
+                return redirect()->back()->with('error', 'Pilih tanggal mulai dan akhir untuk rentang ekspor.');
+            }
+            try {
+                $start = Carbon::parse($startDate)->startOfDay();
+                $end = Carbon::parse($endDate)->endOfDay();
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Format tanggal tidak valid. Gunakan YYYY-MM-DD.');
+            }
+            if ($start->gt($end)) {
+                return redirect()->back()->with('error', 'Tanggal mulai harus sebelum atau sama dengan tanggal akhir.');
+            }
+            $label = $start->format('d/m/Y') . ' - ' . $end->format('d/m/Y');
+        } else {
+            $bulan = (int) $request->query('bulan');
+            $tahun = (int) $request->query('tahun');
+            if (! $bulan || ! $tahun) {
+                return redirect()->back()->with('error', 'Pilih bulan dan tahun atau rentang tanggal.');
+            }
+            try {
+                $start = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Tanggal tidak valid');
+            }
+            $end = $start->copy()->endOfMonth();
+            $label = $start->isoFormat('MMMM YYYY');
         }
-        $end = $start->copy()->endOfMonth();
 
         $rows = TamuModel::whereBetween('created_at', [$start, $end])->orderBy('created_at','asc')->get();
 
@@ -120,9 +171,9 @@ class RekapanController extends Controller
 
         $data = [
             'rows' => $rows,
-            'bulan' => $bulan,
-            'tahun' => $tahun,
-            'label' => $start->isoFormat('MMMM YYYY'),
+            'label' => $label,
+            'start' => $start,
+            'end' => $end,
         ];
 
             // If barryvdh/laravel-dompdf is installed, use it. Otherwise render HTML view for manual print.
@@ -135,7 +186,12 @@ class RekapanController extends Controller
                             $pdfObj->setPaper('a4', 'landscape');
                         }
                         if (is_object($pdfObj) && method_exists($pdfObj, 'download')) {
-                            return $pdfObj->download(sprintf('rekapan_%04d-%02d.pdf', $tahun, $bulan));
+                            if (isset($bulan) && isset($tahun)) {
+                                $filename = sprintf('rekapan_%04d-%02d.pdf', $tahun, $bulan);
+                            } else {
+                                $filename = 'rekapan_' . $start->format('Ymd') . '_' . $end->format('Ymd') . '.pdf';
+                            }
+                            return $pdfObj->download($filename);
                         }
                     }
 
@@ -148,9 +204,14 @@ class RekapanController extends Controller
                         $dompdf->setPaper('A4', 'landscape');
                         $dompdf->render();
                         $output = $dompdf->output();
+                        if (isset($bulan) && isset($tahun)) {
+                            $filename = sprintf('rekapan_%04d-%02d.pdf', $tahun, $bulan);
+                        } else {
+                            $filename = 'rekapan_' . $start->format('Ymd') . '_' . $end->format('Ymd') . '.pdf';
+                        }
                         return response($output, 200, [
                             'Content-Type' => 'application/pdf',
-                            'Content-Disposition' => 'attachment; filename="' . sprintf('rekapan_%04d-%02d.pdf', $tahun, $bulan) . '"',
+                            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
                         ]);
                     }
                 } catch (\Exception $e) {

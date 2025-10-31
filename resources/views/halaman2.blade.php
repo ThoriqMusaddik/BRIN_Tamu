@@ -21,14 +21,6 @@
                         <p class="lead">data kunjungan anda berhasil dikirim</p>
                         </div>
                     </div>
-                    <footer class="site-footer">
-                <div class="site-footer-item">
-                    <img src="{{ asset('gambar/Logo ITH.png') }}" alt="IG" onerror="this.style.display='none'" />
-                    <div class="meta">
-                        <div>INSTITUT TEKNOLOGI BACHARUDDIN JUSUF HABIBIE</div>
-                        <div class="email">Thoariq Musaddik |  M. Fauzan Iskandar
-                    </div>
-                </div>
             </footer>
                 </div>
             </section>

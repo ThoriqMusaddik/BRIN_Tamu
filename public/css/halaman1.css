@@ -6,10 +6,19 @@
 	--accent-soft:rgba(183,28,28,0.12);
 }
 *{box-sizing:border-box}
+html, body { height: 100%; overflow-y: hidden; }
+
+/* Allow scrolling on small devices so content/modal remains accessible */
+@media (max-width: 520px) {
+  html, body { overflow-y: auto; height: auto; }
+}
+
 body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin:0; background:#fff}
-.container{max-width:1200px;margin:18px auto;padding:12px}
-.header{padding:12px 4px 28px;position:relative;z-index:10}
-.header-inner{display:flex;align-items:center;gap:18px;flex-wrap:nowrap}
+
+.container{max-width:1200px;margin:0 auto;padding:12px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.header{padding:10px 8px 16px;position:relative;z-index:10}
+.header-inner{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;justify-content:center}
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit}
 .logo{
 	/* Preserve full logo without cropping */
 	width: auto;            /* allow natural width */
@@ -79,27 +88,34 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 }
 /* .card.card-tr { background-image: url('/gambar/bg2.jpg'); } */
 .overlay-form{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60%;max-width:720px;min-width:320px}
-.overlay-inner{max-height:70vh;overflow:auto}
-.overlay-inner{background:rgba(255,255,255,0.78);backdrop-filter:blur(2px);border-radius:16px;padding:28px 32px;box-shadow:0 14px 36px rgba(0,0,0,0.08);text-align:center}
-.overlay-inner h1{color:var(--accent);font-size:32px;margin:0 0 8px;font-weight:800}
+/* Remove inner scrolling so the form stays on single screen */
+.overlay-inner{background:rgba(255,255,255,0.98);backdrop-filter:blur(6px);border-radius:12px;padding:20px 18px;box-shadow:0 8px 20px rgba(11,22,33,0.04);text-align:center;max-height:none;overflow:visible}
+.overlay-inner h1{color:var(--accent);font-size:26px;margin:0 0 6px;font-weight:700}
 .overlay-inner .lead {
-  color: rgba(0, 0, 0,90);
-  margin: 0 0 20px;
-  font-weight: bold;
+  color: rgba(34,34,34,0.8);
+  margin: 0 0 12px;
+  font-weight:600;
 }
 
-.visit-form{display:flex;flex-direction:column;align-items:center;gap:14px}
-.visit-form input[type=text]{width:82%;padding:14px 18px;border-radius:28px;border:2px solid rgba(183,28,28,0.25);font-size:16px;outline:none;background:transparent}
-.visit-form input[type=text]::placeholder{color:rgba(183,28,28,0.6)}
-.visit-form input[type=text]:focus{border-color:var(--accent);box-shadow:0 6px 18px rgba(183,28,28,0.06)}
-
-.visit-form select{width:82%;padding:14px 18px;border-radius:28px;border:2px solid rgba(183,28,28,0.25);font-size:16px;outline:none;background:transparent;color:inherit}
-.visit-form select:focus{border-color:var(--accent);box-shadow:0 6px 18px rgba(183,28,28,0.06)}
-
-/* style number inputs same as text and hide default spin controls */
-.visit-form input[type=number]{width:82%;padding:14px 18px;border-radius:28px;border:2px solid rgba(183,28,28,0.25);font-size:16px;outline:none;background:transparent}
-.visit-form input[type=number]::placeholder{color:rgba(183,28,28,0.6)}
-.visit-form input[type=number]:focus{border-color:var(--accent);box-shadow:0 6px 18px rgba(183,28,28,0.06)}
+.visit-form{display:flex;flex-direction:column;align-items:center;gap:12px}
+.visit-form input[type=text], .visit-form input[type=number], .visit-form select{
+  width:82%;
+  max-width:520px;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(34,34,34,0.06);
+  font-size:15px;
+  outline:none;
+  background:rgba(255,255,255,1);
+  transition:box-shadow .16s ease, border-color .12s ease, transform .08s ease;
+  box-sizing:border-box;
+}
+.visit-form input[type=text]::placeholder, .visit-form input[type=number]::placeholder{color:rgba(0,0,0,0.35)}
+.visit-form input[type=text]:focus, .visit-form input[type=number]:focus, .visit-form select:focus{
+  border-color: rgba(183,28,28,0.9);
+  box-shadow:0 8px 20px rgba(183,28,28,0.06);
+  transform:translateY(-1px);
+}
 
 /* Remove spinner for Chrome, Safari, Edge, Opera */
 .visit-form input[type=number]::-webkit-outer-spin-button,
@@ -114,9 +130,10 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 	appearance: textfield;
 }
 
-.btn-wrap{margin-top:8px}
-.visit-form button{background:var(--accent);color:#fff;border:none;padding:12px 24px;border-radius:6px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(183,28,28,0.18)}
-.visit-form button:hover{background:#9f1717}
+.btn-wrap{margin-top:10px;display:flex;gap:10px}
+.btn-wrap button{flex:1;min-width:0;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;height:48px}
+.visit-form button{background:var(--accent);color:#fff;border:none;padding:0 18px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 6px 18px rgba(11,22,33,0.06);transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease}
+.visit-form button:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(11,22,33,0.08)}
 
 @media(max-width:900px){
 	.card {
@@ -163,19 +180,20 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
     padding: 12px 24px;
   }
 }
-	.overlay-form{position:relative !important;left:auto !important;top:auto !important;transform:none !important;width:94%;padding:0 8px;margin:12px auto}
-	.overlay-inner{padding:18px}
-	.overlay-inner h1{font-size:22px}
-	.visit-form input[type=text],
-	.visit-form input[type=number],
-	.visit-form select{width:100%}
-	.visit-form input[type=text], .visit-form input[type=number]{padding:12px 14px}
-	.visit-form select{padding:12px 14px}
-	.visit-form button{width:48%;padding:12px 10px;border-radius:8px}
-	.btn-wrap{display:flex;gap:8px;justify-content:center}
+  /* keep overlay centered but avoid internal scroll on mobile; allow page to stay one screen */
+  .overlay-form{position:relative !important;left:auto !important;top:auto !important;transform:none !important;width:94%;padding:0 8px;margin:8vh auto}
+  .overlay-inner{padding:18px}
+  .overlay-inner h1{font-size:22px}
+  .visit-form input[type=text],
+  .visit-form input[type=number],
+  .visit-form select{width:100%}
+  .visit-form input[type=text], .visit-form input[type=number]{padding:12px 14px}
+  .visit-form select{padding:12px 14px}
+  .visit-form button{width:48%;padding:12px 10px;border-radius:8px}
+  .btn-wrap{display:flex;gap:8px;justify-content:center}
 
-	/* add bottom space so footer isn't too close */
-	.cards-area{padding-bottom:36px}
+  /* add bottom space so footer isn't too close */
+  .cards-area{padding-bottom:36px}
 }
 
 /* Smartphone-optimized grid: use auto-fit with minmax so cards flow nicely */
@@ -188,9 +206,28 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 		padding:6px 0;
 	}
 	.card{border-radius:12px;min-height:140px;background-position:center}
-	.overlay-form{top:12%;width:96%;transform:translateX(-50%)}
-	.overlay-inner{padding:14px}
-	.overlay-inner h1{font-size:20px}
+  .overlay-form{position:relative;top:auto;width:94%;margin:6vh auto;transform:none}
+  .overlay-inner{padding:16px;border-radius:12px}
+  .overlay-inner h1{font-size:20px;margin-bottom:8px}
+  .overlay-inner .lead{font-size:14px;margin-bottom:14px}
+
+  /* Inputs full width, slightly reduced padding to fit mobile */
+  .visit-form input[type=text],
+  .visit-form input[type=number],
+  .visit-form select{width:100%;padding:12px 14px}
+
+  /* Buttons: prefer side-by-side on most phones (grid mode). Stack only on very narrow devices */
+  .btn-wrap{display:flex;flex-direction:row;gap:10px;align-items:center;justify-content:space-between;margin-top:10px}
+  .visit-form button{width:48%;padding:12px;border-radius:10px;font-size:16px}
+
+  /* Extra-narrow phones: stack buttons for better touch targets */
+  @media (max-width: 360px) {
+    .btn-wrap{flex-direction:column;align-items:stretch}
+    .visit-form button{width:100%}
+  }
+
+  /* Slightly larger footer text on mobile for readability */
+  .site-footer .meta{font-size:12px}
 }
 
 /* Checkout modal styles */
@@ -275,14 +312,17 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
 /* --- Responsive seperti P1 --- */
 @media (max-width: 520px) {
     .site-footer {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        align-items: center;
-        justify-items: center;
-        padding: 10px;
-        margin-top: 28px;
-        padding-bottom: 12px;
+    /* Mobile: two-column compact footer with centered content */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    align-items: center;
+    justify-items: center;
+    padding: 12px 14px;
+    margin-top: 20px;
+    padding-bottom: 12px;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 -6px 18px rgba(0,0,0,0.04);
     }
 
     .site-footer-item {
@@ -292,13 +332,14 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
     }
 
     .site-footer img {
-        width: 18px;
-        height: 18px;
+    width: 22px;
+    height: 22px;
     }
 
     .site-footer .meta {
-        font-size: 11px;
-        text-align: center;
+    font-size: 12px;
+    text-align: center;
+    line-height:1.15;
     }
 }
 
@@ -310,22 +351,56 @@ body{font-family:'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
         padding-bottom: 16px;
     }
 
-    .site-footer img {
-        width: 16px;
-        height: 16px;
-    }
+  .site-footer img {
+    width: 18px;
+    height: 18px;
+  }
 
-    .site-footer .meta {
-        font-size: 11px;
-    }
+  .site-footer .meta {
+    font-size: 12px;
+  }
 }
 @media (max-width: 520px) {
   .site-footer {
     position: relative !important; /* bukan fixed */
     bottom: auto;
     width: 100%;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(4px);
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(6px);
     border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top:8px;
+    padding-bottom:12px;
   }
 }
+
+/* Mobile: stack footer items and add bottom padding so content isn't hidden */
+@media (max-width: 520px) {
+  .site-footer-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:8px 6px;
+    min-width:0;
+  }
+
+  .site-footer{padding-top:8px;padding-bottom:12px}
+}
+  .site-footer-inline{
+    display:flex;
+    justify-content:center;
+    padding:18px 12px;
+    margin-top:20px;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .site-footer-inline .site-footer-item{min-width:0;gap:10px}
+  .site-footer-inline img{width:28px;height:28px}
+  .site-footer-inline .meta{font-size:12px;color:#333}
+
+  @media(max-width:520px){
+    .site-footer-inline{padding:12px 10px;margin-top:14px}
+    .site-footer-inline img{width:22px;height:22px}
+    .site-footer-inline .meta{font-size:11px;text-align:center}
+  }

@@ -7,6 +7,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('css/halaman1.css') }}">
     </head>
+
     <body>
         <div class="container">
             <header class="header">
@@ -16,14 +17,7 @@
                 </div>
             </header>
 
-            <section class="cards-area">
-                <div class="cards-grid">
-                    <!-- <div class="card card-tl" style="background-image: url('{{ asset('gambar/bg1.jpg') }}');" aria-hidden="true"></div> -->
-                    <div class="card card-tr" style="background-image: url('{{ asset('gambar/bg2.jpg') }}');" aria-hidden="true"></div>
-                    <!-- <div class="card card-bl" style="background-image: url('{{ asset('gambar/bg3.jpg') }}');" aria-hidden="true"></div>
-                    <div class="card card-br" style="background-image: url('{{ asset('gambar/bg4.jpg') }}');" aria-hidden="true"></div> -->
-                </div>
-
+            <main>
                 <div class="overlay-form">
                     <div class="overlay-inner">
                         <h1>Selamat datang di BRIN.</h1>
@@ -31,10 +25,12 @@
 
                         <form class="visit-form" action="{{ route('submit.visit') }}" method="post">
                             @csrf
+
                             <input type="text" name="nama" placeholder="Nama Lengkap" required>
                             <input type="text" name="kontak" placeholder="Nomor HP / Email" required>
                             <input type="number" name="jumlah_orang" placeholder="Jumlah Orang" required min="1" inputmode="numeric">
                             <input type="text" name="instansi" placeholder="Instansi" required>
+
                             <select name="tujuan" id="tujuan" required>
                                 <option value="">Pilih Tujuan</option>
                                 <option value="Layanan data">Layanan Data Citra</option>
@@ -44,6 +40,7 @@
                                 <option value="Magang/PKL/BimbinganSkripsi">Magang/PKL/Bimbingan Skripsi</option>
                                 <option value="Maintenance">Maintenance</option>
                             </select>
+
                             <select name="penanggung_jawab" id="penanggung_jawab" required>
                                 <option value="">Pilih Penanggung jawab</option>
                                 <option value="Riski Wahyuningrum">Riski Wahyuningrum</option>
@@ -57,6 +54,7 @@
                                 <option value="Lewi">Lewi</option>
                                 <option value="Vendor/TDP">Vendor/TDP</option>
                             </select>
+
                             <label for="stay_until" style="margin-top:8px;display:block;font-size:14px;color:#333">Tanggal Kunjungan sampai Dengan:</label>
                             <input type="date" name="stay_until" id="stay_until" value="{{ date('Y-m-d') }}" style="padding:8px;border-radius:6px;border:1px solid #ccc;margin-top:6px;" />
 
@@ -65,27 +63,21 @@
                                 <button type="button" id="checkout-button">Check out</button>
                             </div>
                         </form>
-                    </div>
-                </div>
-            </section>
-            <!-- Footer: two items inline -->
-            <footer class="site-footer">
+                    </div> <!-- .overlay-inner -->
+                </div> <!-- .overlay-form -->
+            </main>
+
+            <!-- Inline site note below the form (not a fixed footer) -->
+            <div class="site-footer-inline">
                 <div class="site-footer-item">
-                    <img src="{{ asset('gambar/Logo ITH.png') }}" alt="IG" onerror="this.style.display='none'" />
+                    <img src="{{ asset('gambar/Logo ITH.png') }}" alt="Logo ITH" onerror="this.style.display='none'" />
                     <div class="meta">
                         <div>INSTITUT TEKNOLOGI BACHARUDDIN JUSUF HABIBIE</div>
-                        <div class="email">Thoariq Musaddik |  M. Fauzan Iskandar
+                        <div class="email">Thoariq Musaddik | M. Fauzan Iskandar</div>
                     </div>
                 </div>
-                <!-- <div class="site-footer-item">
-                    <img src="{{ asset('gambar/logo ig.png') }}" alt="IG" onerror="this.style.display='none'" />
-                    <div class="meta">
-                        <div>Fau4732</div>
-                        <div class="email">Email : muhammadfauzaniskandar241@gmail.com</div>
-                    </div> -->
-                </div>
-            </footer>
-        </div>
+            </div>
+        </div> <!-- .container -->
 
         <!-- Check-out modal: only Nama & Instansi -->
         <div id="checkout-modal" class="overlay-modal" aria-hidden="true">
@@ -104,72 +96,80 @@
                 </form>
             </div>
         </div>
-    </body>
-    <script>
-        function showError(message) {
-            const errorDiv = document.getElementById('checkout-error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
 
-        function hideError() {
-            const errorDiv = document.getElementById('checkout-error');
-            errorDiv.style.display = 'none';
-        }
-
-        // Handle checkout form submission
-        document.getElementById('checkout-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent default form submission
-            hideError(); // Clear any previous errors
-
-            const form = this;
-            const formData = new FormData(form);
-            
-            // Send AJAX request
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Redirect on success
-                    window.location.href = data.redirect;
-                } else {
-                    // Show error message
-                    showError(data.message);
-                }
-            })
-            .catch(error => {
-                showError('Terjadi kesalahan. Silakan coba lagi.');
-            });
-        });
-        (function(){
-            var openBtn = document.getElementById('checkout-button');
-            var modal = document.getElementById('checkout-modal');
-            var cancel = document.getElementById('checkout-cancel');
-            var namaSrc = document.querySelector('form.visit-form input[name="nama"]');
-            var instansiSrc = document.querySelector('form.visit-form input[name="instansi"]');
-            var namaDst = document.getElementById('checkout-nama');
-            var instansiDst = document.getElementById('checkout-instansi');
-
-            function show(){
-                if(modal){
-                    modal.setAttribute('aria-hidden','false');
-                    modal.classList.add('open');
-                    // copy current values if present
-                    if(namaSrc && namaDst) namaDst.value = namaSrc.value || '';
-                    if(instansiSrc && instansiDst) instansiDst.value = instansiSrc.value || '';
-                }
+        <script>
+            function showError(message) {
+                const errorDiv = document.getElementById('checkout-error');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
             }
-            function hide(){ if(modal){ modal.setAttribute('aria-hidden','true'); modal.classList.remove('open'); } }
 
-            if(openBtn) openBtn.addEventListener('click', function(e){ e.preventDefault(); show(); });
-            if(cancel) cancel.addEventListener('click', function(e){ e.preventDefault(); hide(); });
-            if(modal) modal.addEventListener('click', function(e){ if(e.target === modal) hide(); });
-        })();
-    </script>
+            function hideError() {
+                const errorDiv = document.getElementById('checkout-error');
+                errorDiv.style.display = 'none';
+            }
+
+            // Handle checkout form submission
+            document.getElementById('checkout-form').addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent default form submission
+                hideError(); // Clear any previous errors
+
+                const form = this;
+                const formData = new FormData(form);
+
+                // Send AJAX request
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect on success
+                        window.location.href = data.redirect;
+                    } else {
+                        // Show error message
+                        showError(data.message);
+                    }
+                })
+                .catch(error => {
+                    showError('Terjadi kesalahan. Silakan coba lagi.');
+                });
+            });
+
+            (function(){
+                var openBtn = document.getElementById('checkout-button');
+                var modal = document.getElementById('checkout-modal');
+                var cancel = document.getElementById('checkout-cancel');
+                var namaSrc = document.querySelector('form.visit-form input[name="nama"]');
+                var instansiSrc = document.querySelector('form.visit-form input[name="instansi"]');
+                var namaDst = document.getElementById('checkout-nama');
+                var instansiDst = document.getElementById('checkout-instansi');
+
+                function show(){
+                    if(modal){
+                        modal.setAttribute('aria-hidden','false');
+                        modal.classList.add('open');
+                        // copy current values if present
+                        if(namaSrc && namaDst) namaDst.value = namaSrc.value || '';
+                        if(instansiSrc && instansiDst) instansiDst.value = instansiSrc.value || '';
+                    }
+                }
+
+                function hide(){
+                    if(modal){
+                        modal.setAttribute('aria-hidden','true');
+                        modal.classList.remove('open');
+                    }
+                }
+
+                if(openBtn) openBtn.addEventListener('click', function(e){ e.preventDefault(); show(); });
+                if(cancel) cancel.addEventListener('click', function(e){ e.preventDefault(); hide(); });
+                if(modal) modal.addEventListener('click', function(e){ if(e.target === modal) hide(); });
+            })();
+        </script>
+    </body>
 </html>
